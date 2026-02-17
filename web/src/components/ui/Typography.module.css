@@ -1,0 +1,137 @@
+/**
+ * Typography Component Styles
+ * 
+ * Applies typography styles from CSS variables based on variant and color.
+ */
+
+.typography {
+  margin: 0;
+  font-family: var(--font-family);
+  color: var(--color-text);
+}
+
+/* --------------------------------------------------------------------------
+   Variant Styles
+   -------------------------------------------------------------------------- */
+
+.typography[data-variant="h1"] {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-h1);
+  line-height: var(--line-height-tight);
+}
+
+.typography[data-variant="h2"] {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-h2);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-h2);
+}
+
+.typography[data-variant="h3"] {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-h3);
+  line-height: var(--line-height-snug);
+}
+
+.typography[data-variant="h4"] {
+  font-size: var(--font-size-h4);
+  font-weight: var(--font-weight-h4);
+  line-height: var(--line-height-snug);
+}
+
+.typography[data-variant="h5"] {
+  font-size: var(--font-size-h5);
+  font-weight: var(--font-weight-h5);
+  line-height: var(--line-height-normal);
+}
+
+.typography[data-variant="h6"] {
+  font-size: var(--font-size-h6);
+  font-weight: var(--font-weight-h6);
+  line-height: var(--line-height-normal);
+}
+
+.typography[data-variant="body1"] {
+  font-size: var(--font-size-body1);
+  font-weight: var(--font-weight-body1);
+  line-height: var(--line-height-normal);
+}
+
+.typography[data-variant="body2"] {
+  font-size: var(--font-size-body2);
+  font-weight: var(--font-weight-body2);
+  line-height: var(--line-height-normal);
+}
+
+.typography[data-variant="subtitle1"] {
+  font-size: var(--font-size-body1);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+}
+
+.typography[data-variant="subtitle2"] {
+  font-size: var(--font-size-body2);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+}
+
+.typography[data-variant="caption"] {
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+  display: inline-block;
+}
+
+/* --------------------------------------------------------------------------
+   Color Styles
+   -------------------------------------------------------------------------- */
+
+.typography[data-color="textPrimary"] {
+  color: var(--color-text-primary);
+}
+
+.typography[data-color="textSecondary"] {
+  color: var(--color-text-secondary);
+}
+
+.typography[data-color="primary"] {
+  color: var(--color-primary);
+}
+
+.typography[data-color="secondary"] {
+  color: var(--color-secondary);
+}
+
+.typography[data-color="error"] {
+  color: var(--color-error);
+}
+
+.typography[data-color="warning"] {
+  color: var(--color-warning);
+}
+
+.typography[data-color="success"] {
+  color: var(--color-success);
+}
+
+.typography[data-color="info"] {
+  color: var(--color-info);
+}
+
+.typography[data-color="inherit"] {
+  color: inherit;
+}
+
+/* --------------------------------------------------------------------------
+   Modifier Styles
+   -------------------------------------------------------------------------- */
+
+.typography[data-nowrap] {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.typography[data-gutter-bottom] {
+  margin-bottom: 0.35em;
+}

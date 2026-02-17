@@ -281,7 +281,8 @@ helm-lint: ## Lint the Helm chart
 		--set github.orgs[0].teams[0]=ace-devs \
 		--set githubRbac.orgs[0].name=some-org \
 		--set githubRbac.orgs[0].teams[0]=ace-devs \
-		--set oauth2Proxy.cookieSecret=$(OAUTH2P_COOKIE_SECRET)
+		--set oauth2Proxy.cookieSecret=$(OAUTH2P_COOKIE_SECRET) \
+		--set authmiddleware.jwtSigningKey=some-signing-key
 
 .PHONY: helm-test
 helm-test: ## Test the Helm chart with helm template
@@ -481,44 +482,6 @@ redeploy-kind: kubectl-kind ## Rebuild and redeploy controller to the kind clust
 	$(KUBECTL) delete deployment jupyter-k8s-controller-manager -n jupyter-k8s-system --ignore-not-found
 	$(MAKE) deploy-kind
 
-##@ Local Auth Middleware & Rotator
-.PHONY: build-authmiddleware
-build-authmiddleware: ## Build authmiddleware image for local testing
-	@echo "Building authmiddleware image..."
-	$(CONTAINER_TOOL) build $(BUILD_OPTS) -t docker.io/library/authmiddleware:local -f images/authmiddleware/Dockerfile .
-
-.PHONY: build-rotator
-build-rotator: ## Build rotator image for local testing
-	@echo "Building rotator image..."
-	$(CONTAINER_TOOL) build $(BUILD_OPTS) -t docker.io/library/rotator:local -f images/rotator/Dockerfile .
-
-.PHONY: load-auth-images
-load-auth-images: build-authmiddleware build-rotator ## Build and load authmiddleware and rotator images into Kind cluster
-	@echo "Loading authmiddleware and rotator images into kind cluster ${DEV_KIND_CLUSTER}..."
-	@mkdir -p /tmp/kind-images
-	$(CONTAINER_TOOL) save docker.io/library/authmiddleware:local -o /tmp/kind-images/authmiddleware.tar
-	$(CONTAINER_TOOL) save docker.io/library/rotator:local -o /tmp/kind-images/rotator.tar
-	$(KIND) load image-archive /tmp/kind-images/authmiddleware.tar --name $(DEV_KIND_CLUSTER)
-	$(KIND) load image-archive /tmp/kind-images/rotator.tar --name $(DEV_KIND_CLUSTER)
-	rm -f /tmp/kind-images/authmiddleware.tar /tmp/kind-images/rotator.tar
-
-.PHONY: deploy-auth-kind
-deploy-auth-kind: kubectl-kind ## Deploy authmiddleware and rotator to Kind cluster
-	@echo "Deploying authmiddleware and rotator to kind cluster..."
-	$(KUSTOMIZE) build config-auth/default | $(KUBECTL) apply -f -
-	@echo "✅ Authmiddleware and rotator deployed to jupyter-k8s-router namespace"
-
-.PHONY: update-auth-kind
-update-auth-kind: kubectl-kind ## Rebuild, reload images, and redeploy authmiddleware/rotator
-	$(KUBECTL) delete deployment jupyter-k8s-authmiddleware -n jupyter-k8s-router --ignore-not-found=true
-	$(MAKE) load-auth-images
-	$(MAKE) deploy-auth-kind
-
-.PHONY: undeploy-auth-kind
-undeploy-auth-kind: kubectl-kind ## Remove authmiddleware and rotator from Kind cluster
-	@echo "Removing authmiddleware and rotator from kind cluster..."
-	$(KUSTOMIZE) build config-auth/default | $(KUBECTL) delete --ignore-not-found=true -f -
-	@echo "✅ Authmiddleware and rotator removed (namespace preserved)"
 
 ##@ AWS Deployment
 setup-aws-internal: ## Setup connection to remote cluster
@@ -539,10 +502,6 @@ setup-aws-internal: ## Setup connection to remote cluster
 	@echo "Creating ECR repository for auth middleware if it doesn't exist..."
 	aws ecr describe-repositories --repository-names $(ECR_REPOSITORY_AUTH) --region $(AWS_REGION) > /dev/null || \
 	aws ecr create-repository --repository-name $(ECR_REPOSITORY_AUTH) --region $(AWS_REGION)
-
-	@echo "Creating ECR repository for rotator if it doesn't exist..."
-	aws ecr describe-repositories --repository-names $(ECR_REPOSITORY_ROTATOR) --region $(AWS_REGION) > /dev/null || \
-	aws ecr create-repository --repository-name $(ECR_REPOSITORY_ROTATOR) --region $(AWS_REGION)
 
 	@if ! kubectl get namespace cert-manager > /dev/null 2>&1; then \
 		echo "Installing cert-manager"; \
@@ -597,14 +556,6 @@ load-images-aws-internal: manifests generate fmt vet ## Build and push container
 	@echo "Logging in to ECR..."
 	aws ecr get-login-password --region $(AWS_REGION) | $(CONTAINER_TOOL) login --username AWS --password-stdin $(ECR_REGISTRY)
 
-	@echo "Creating ECR repositories if they don't exist..."
-	@aws ecr describe-repositories --repository-names $(ECR_REPOSITORY) --region $(AWS_REGION) > /dev/null 2>&1 || \
-		aws ecr create-repository --repository-name $(ECR_REPOSITORY) --region $(AWS_REGION)
-	@aws ecr describe-repositories --repository-names $(ECR_REPOSITORY_AUTH) --region $(AWS_REGION) > /dev/null 2>&1 || \
-		aws ecr create-repository --repository-name $(ECR_REPOSITORY_AUTH) --region $(AWS_REGION)
-	@aws ecr describe-repositories --repository-names $(ECR_REPOSITORY_ROTATOR) --region $(AWS_REGION) > /dev/null 2>&1 || \
-		aws ecr create-repository --repository-name $(ECR_REPOSITORY_ROTATOR) --region $(AWS_REGION)
-
 	@echo "Building controller image..."
 	$(CONTAINER_TOOL) build $(BUILD_OPTS) --platform=linux/amd64 -t $(ECR_REGISTRY)/$(ECR_REPOSITORY):latest .
 	$(CONTAINER_TOOL) push $(ECR_REGISTRY)/$(ECR_REPOSITORY):latest
@@ -614,11 +565,6 @@ load-images-aws-internal: manifests generate fmt vet ## Build and push container
 	$(CONTAINER_TOOL) build $(BUILD_OPTS) --platform=linux/amd64 -t $(ECR_REGISTRY)/$(ECR_REPOSITORY_AUTH):latest -f images/authmiddleware/Dockerfile .
 	$(CONTAINER_TOOL) push $(ECR_REGISTRY)/$(ECR_REPOSITORY_AUTH):latest
 	@echo "Auth middleware image built and pushed successfully to $(ECR_REGISTRY)/$(ECR_REPOSITORY_AUTH):latest"
-
-	@echo "Building rotator image..."
-	$(CONTAINER_TOOL) build $(BUILD_OPTS) --platform=linux/amd64 -t $(ECR_REGISTRY)/$(ECR_REPOSITORY_ROTATOR):latest -f images/rotator/Dockerfile .
-	$(CONTAINER_TOOL) push $(ECR_REGISTRY)/$(ECR_REPOSITORY_ROTATOR):latest
-	@echo "Rotator image built and pushed successfully to $(ECR_REGISTRY)/$(ECR_REPOSITORY_ROTATOR):latest"
 
 	@echo "Building application images..."
 	$(MAKE) -C images push-all-aws CLOUD_PROVIDER=aws CONTAINER_TOOL=$(CONTAINER_TOOL)
@@ -703,8 +649,6 @@ deploy-aws-traefik-dex-internal:
 			HELM_ARGS="$$HELM_ARGS --set dex.kubernetesClientSecret=$$DEX_K8S_SECRET"; \
 		fi; \
 		\
-		# Default redirect ports are set in values.yaml (8000, 18000, 9800) \
-		# But allow overriding with env vars \
 		if [ ! -z "$$KUBECTL_REDIRECT_PORTS" ]; then \
 			IFS=',' read -ra PORTS <<< "$$KUBECTL_REDIRECT_PORTS"; \
 			PORT_INDEX=0; \
@@ -714,7 +658,7 @@ deploy-aws-traefik-dex-internal:
 			done; \
 		fi; \
 		\
-		helm upgrade --install jk8-aws-traefik-dex /tmp/jk8s-aws-traefik-dex/aws-traefik-dex \
+		helm upgrade --install jk8-aws-traefik-dex /tmp/jk8s-aws-traefik-dex \
 			-n jupyter-k8s-router \
 			--create-namespace \
 			--force \
@@ -730,8 +674,8 @@ deploy-aws-traefik-dex-internal:
 	)
 	@echo "Restarting deployments to use new images..."
 	kubectl rollout restart deployment -n jupyter-k8s-router \
-		traefik oauth2-proxy dex authmiddleware
-	@echo "All deployments to use new images..."
+		traefik oauth2-proxy dex authmiddleware web-app
+	@echo "All deployments restarted to use new images..."
 	# Clean up temporary chart directory
 	rm -rf /tmp/jk8s-aws-traefik-dex
 	@echo "Bash script for end-users to set their kubeconfig available at: dist/users-scripts"

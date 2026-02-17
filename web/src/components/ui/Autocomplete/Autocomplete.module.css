@@ -1,0 +1,129 @@
+/**
+ * Autocomplete Component Styles
+ * 
+ * Styles for the Autocomplete component that match MUI's visual appearance.
+ */
+
+.autocomplete {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.autocomplete[data-fullwidth] {
+  width: 100%;
+}
+
+/* Listbox (dropdown) */
+.listbox {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  max-height: 300px;
+  overflow-y: auto;
+  background-color: var(--color-background-paper, #fff);
+  border-radius: var(--border-radius-sm, 4px);
+  box-shadow: 0px 5px 5px -3px rgba(0,0,0,0.2),
+              0px 8px 10px 1px rgba(0,0,0,0.14),
+              0px 3px 14px 2px rgba(0,0,0,0.12);
+  z-index: 1300;
+  padding: 8px 0;
+}
+
+[data-theme="dark"] .listbox {
+  background-color: var(--color-background-paper, #1e1e1e);
+}
+
+/* Option */
+.option {
+  padding: 6px 16px;
+  font-family: var(--font-family);
+  font-size: 0.875rem;
+  color: var(--color-text-primary, rgba(0, 0, 0, 0.87));
+  cursor: pointer;
+  transition: background-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+
+[data-theme="dark"] .option {
+  color: var(--color-text-primary, rgba(255, 255, 255, 0.87));
+}
+
+.option:hover:not([data-disabled]) {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] .option:hover:not([data-disabled]) {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.option[data-selected] {
+  background-color: rgba(0, 0, 0, 0.08);
+  font-weight: 500;
+}
+
+[data-theme="dark"] .option[data-selected] {
+  background-color: rgba(255, 255, 255, 0.16);
+}
+
+.option[data-disabled] {
+  color: var(--color-text-disabled, rgba(0, 0, 0, 0.38));
+  cursor: default;
+  pointer-events: none;
+}
+
+[data-theme="dark"] .option[data-disabled] {
+  color: var(--color-text-disabled, rgba(255, 255, 255, 0.38));
+}
+
+/* Loading indicator */
+.loading {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Size variants */
+.autocomplete[data-size="small"] .option {
+  padding: 4px 12px;
+  font-size: 0.8125rem;
+}
+
+/* Scrollbar styling */
+.listbox::-webkit-scrollbar {
+  width: 8px;
+}
+
+.listbox::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.listbox::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+[data-theme="dark"] .listbox::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.listbox::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .listbox::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
