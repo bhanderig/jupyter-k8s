@@ -1,0 +1,613 @@
+/**
+ * Button Component Styles
+ * 
+ * Styles for the Button wrapper component that match MUI's appearance.
+ * Uses CSS custom properties from theme.css for consistent theming.
+ */
+
+/* ============================================================================
+   Base Button Styles
+   ============================================================================ */
+
+.button {
+  /* Layout */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  position: relative;
+  
+  /* Typography */
+  font-family: var(--font-family);
+  font-size: var(--font-size-button);
+  font-weight: var(--font-weight-button);
+  line-height: var(--line-height-normal);
+  text-transform: var(--button-text-transform);
+  letter-spacing: var(--letter-spacing-normal);
+  
+  /* Spacing */
+  padding: var(--spacing-2) var(--spacing-4);
+  
+  /* Appearance */
+  border-radius: var(--button-border-radius);
+  border: none;
+  outline: none;
+  background: transparent;
+  
+  /* Interaction */
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  
+  /* Transitions */
+  transition: background-color var(--transition-fast),
+              border-color var(--transition-fast),
+              color var(--transition-fast),
+              box-shadow var(--transition-fast);
+  
+  /* Remove default button styles */
+  appearance: none;
+  text-decoration: none;
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ============================================================================
+   Size Variants
+   ============================================================================ */
+
+.button[data-size="small"] {
+  padding: var(--spacing-1) var(--spacing-3);
+  font-size: 0.8125rem; /* 13px */
+  gap: var(--spacing-1);
+}
+
+.button[data-size="medium"] {
+  padding: var(--spacing-2) var(--spacing-4);
+  font-size: var(--font-size-button);
+  gap: var(--spacing-2);
+}
+
+.button[data-size="large"] {
+  padding: var(--spacing-3) var(--spacing-5);
+  font-size: 0.9375rem; /* 15px */
+  gap: var(--spacing-2);
+}
+
+/* ============================================================================
+   Full Width
+   ============================================================================ */
+
+.button[data-fullwidth] {
+  width: 100%;
+}
+
+/* ============================================================================
+   Disabled State
+   ============================================================================ */
+
+.button:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ============================================================================
+   Icon Containers
+   ============================================================================ */
+
+.startIcon,
+.endIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem; /* 20px */
+}
+
+.startIcon {
+  margin-left: calc(var(--spacing-1) * -1);
+}
+
+.endIcon {
+  margin-right: calc(var(--spacing-1) * -1);
+}
+
+.button[data-size="small"] .startIcon,
+.button[data-size="small"] .endIcon {
+  font-size: 1.125rem; /* 18px */
+}
+
+.button[data-size="large"] .startIcon,
+.button[data-size="large"] .endIcon {
+  font-size: 1.375rem; /* 22px */
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ============================================================================
+   TEXT VARIANT
+   ============================================================================ */
+
+/* Text - Primary */
+.button[data-variant="text"][data-color="primary"] {
+  color: var(--color-primary);
+  background: transparent;
+}
+
+.button[data-variant="text"][data-color="primary"]:hover:not(:disabled) {
+  background: var(--color-action-hover);
+}
+
+.button[data-variant="text"][data-color="primary"]:active:not(:disabled) {
+  background: var(--color-action-selected);
+}
+
+.button[data-variant="text"][data-color="primary"]:disabled {
+  color: var(--color-action-disabled);
+}
+
+/* Text - Secondary */
+.button[data-variant="text"][data-color="secondary"] {
+  color: var(--color-secondary);
+  background: transparent;
+}
+
+.button[data-variant="text"][data-color="secondary"]:hover:not(:disabled) {
+  background: var(--color-action-hover);
+}
+
+.button[data-variant="text"][data-color="secondary"]:active:not(:disabled) {
+  background: var(--color-action-selected);
+}
+
+.button[data-variant="text"][data-color="secondary"]:disabled {
+  color: var(--color-action-disabled);
+}
+
+/* Text - Error */
+.button[data-variant="text"][data-color="error"] {
+  color: var(--color-error);
+  background: transparent;
+}
+
+.button[data-variant="text"][data-color="error"]:hover:not(:disabled) {
+  background: rgba(220, 38, 38, 0.04);
+}
+
+.button[data-variant="text"][data-color="error"]:active:not(:disabled) {
+  background: rgba(220, 38, 38, 0.08);
+}
+
+.button[data-variant="text"][data-color="error"]:disabled {
+  color: var(--color-action-disabled);
+}
+
+/* Text - Warning */
+.button[data-variant="text"][data-color="warning"] {
+  color: var(--color-warning);
+  background: transparent;
+}
+
+.button[data-variant="text"][data-color="warning"]:hover:not(:disabled) {
+  background: rgba(217, 119, 6, 0.04);
+}
+
+.button[data-variant="text"][data-color="warning"]:active:not(:disabled) {
+  background: rgba(217, 119, 6, 0.08);
+}
+
+.button[data-variant="text"][data-color="warning"]:disabled {
+  color: var(--color-action-disabled);
+}
+
+/* Text - Success */
+.button[data-variant="text"][data-color="success"] {
+  color: var(--color-success);
+  background: transparent;
+}
+
+.button[data-variant="text"][data-color="success"]:hover:not(:disabled) {
+  background: rgba(22, 163, 74, 0.04);
+}
+
+.button[data-variant="text"][data-color="success"]:active:not(:disabled) {
+  background: rgba(22, 163, 74, 0.08);
+}
+
+.button[data-variant="text"][data-color="success"]:disabled {
+  color: var(--color-action-disabled);
+}
+
+/* Text - Info */
+.button[data-variant="text"][data-color="info"] {
+  color: var(--color-info);
+  background: transparent;
+}
+
+.button[data-variant="text"][data-color="info"]:hover:not(:disabled) {
+  background: rgba(2, 132, 199, 0.04);
+}
+
+.button[data-variant="text"][data-color="info"]:active:not(:disabled) {
+  background: rgba(2, 132, 199, 0.08);
+}
+
+.button[data-variant="text"][data-color="info"]:disabled {
+  color: var(--color-action-disabled);
+}
+
+/* Text - Inherit */
+.button[data-variant="text"][data-color="inherit"] {
+  color: inherit;
+  background: transparent;
+}
+
+.button[data-variant="text"][data-color="inherit"]:hover:not(:disabled) {
+  background: var(--color-action-hover);
+}
+
+.button[data-variant="text"][data-color="inherit"]:active:not(:disabled) {
+  background: var(--color-action-selected);
+}
+
+.button[data-variant="text"][data-color="inherit"]:disabled {
+  color: var(--color-action-disabled);
+}
+
+/* ============================================================================
+   OUTLINED VARIANT
+   ============================================================================ */
+
+/* Outlined - Primary */
+.button[data-variant="outlined"][data-color="primary"] {
+  color: var(--color-primary);
+  background: transparent;
+  border: 1px solid rgba(79, 70, 229, 0.5);
+}
+
+.button[data-variant="outlined"][data-color="primary"]:hover:not(:disabled) {
+  background: rgba(79, 70, 229, 0.04);
+  border-color: var(--color-primary);
+}
+
+.button[data-variant="outlined"][data-color="primary"]:active:not(:disabled) {
+  background: rgba(79, 70, 229, 0.08);
+}
+
+.button[data-variant="outlined"][data-color="primary"]:disabled {
+  color: var(--color-action-disabled);
+  border-color: var(--color-action-disabled);
+}
+
+/* Outlined - Secondary */
+.button[data-variant="outlined"][data-color="secondary"] {
+  color: var(--color-secondary);
+  background: transparent;
+  border: 1px solid rgba(124, 58, 237, 0.5);
+}
+
+.button[data-variant="outlined"][data-color="secondary"]:hover:not(:disabled) {
+  background: rgba(124, 58, 237, 0.04);
+  border-color: var(--color-secondary);
+}
+
+.button[data-variant="outlined"][data-color="secondary"]:active:not(:disabled) {
+  background: rgba(124, 58, 237, 0.08);
+}
+
+.button[data-variant="outlined"][data-color="secondary"]:disabled {
+  color: var(--color-action-disabled);
+  border-color: var(--color-action-disabled);
+}
+
+/* Outlined - Error */
+.button[data-variant="outlined"][data-color="error"] {
+  color: var(--color-error);
+  background: transparent;
+  border: 1px solid rgba(220, 38, 38, 0.5);
+}
+
+.button[data-variant="outlined"][data-color="error"]:hover:not(:disabled) {
+  background: rgba(220, 38, 38, 0.04);
+  border-color: var(--color-error);
+}
+
+.button[data-variant="outlined"][data-color="error"]:active:not(:disabled) {
+  background: rgba(220, 38, 38, 0.08);
+}
+
+.button[data-variant="outlined"][data-color="error"]:disabled {
+  color: var(--color-action-disabled);
+  border-color: var(--color-action-disabled);
+}
+
+/* Outlined - Warning */
+.button[data-variant="outlined"][data-color="warning"] {
+  color: var(--color-warning);
+  background: transparent;
+  border: 1px solid rgba(217, 119, 6, 0.5);
+}
+
+.button[data-variant="outlined"][data-color="warning"]:hover:not(:disabled) {
+  background: rgba(217, 119, 6, 0.04);
+  border-color: var(--color-warning);
+}
+
+.button[data-variant="outlined"][data-color="warning"]:active:not(:disabled) {
+  background: rgba(217, 119, 6, 0.08);
+}
+
+.button[data-variant="outlined"][data-color="warning"]:disabled {
+  color: var(--color-action-disabled);
+  border-color: var(--color-action-disabled);
+}
+
+/* Outlined - Success */
+.button[data-variant="outlined"][data-color="success"] {
+  color: var(--color-success);
+  background: transparent;
+  border: 1px solid rgba(22, 163, 74, 0.5);
+}
+
+.button[data-variant="outlined"][data-color="success"]:hover:not(:disabled) {
+  background: rgba(22, 163, 74, 0.04);
+  border-color: var(--color-success);
+}
+
+.button[data-variant="outlined"][data-color="success"]:active:not(:disabled) {
+  background: rgba(22, 163, 74, 0.08);
+}
+
+.button[data-variant="outlined"][data-color="success"]:disabled {
+  color: var(--color-action-disabled);
+  border-color: var(--color-action-disabled);
+}
+
+/* Outlined - Info */
+.button[data-variant="outlined"][data-color="info"] {
+  color: var(--color-info);
+  background: transparent;
+  border: 1px solid rgba(2, 132, 199, 0.5);
+}
+
+.button[data-variant="outlined"][data-color="info"]:hover:not(:disabled) {
+  background: rgba(2, 132, 199, 0.04);
+  border-color: var(--color-info);
+}
+
+.button[data-variant="outlined"][data-color="info"]:active:not(:disabled) {
+  background: rgba(2, 132, 199, 0.08);
+}
+
+.button[data-variant="outlined"][data-color="info"]:disabled {
+  color: var(--color-action-disabled);
+  border-color: var(--color-action-disabled);
+}
+
+/* Outlined - Inherit */
+.button[data-variant="outlined"][data-color="inherit"] {
+  color: inherit;
+  background: transparent;
+  border: 1px solid currentColor;
+  opacity: 0.5;
+}
+
+.button[data-variant="outlined"][data-color="inherit"]:hover:not(:disabled) {
+  background: var(--color-action-hover);
+  opacity: 1;
+}
+
+.button[data-variant="outlined"][data-color="inherit"]:active:not(:disabled) {
+  background: var(--color-action-selected);
+}
+
+.button[data-variant="outlined"][data-color="inherit"]:disabled {
+  color: var(--color-action-disabled);
+  border-color: var(--color-action-disabled);
+  opacity: 1;
+}
+
+/* ============================================================================
+   CONTAINED VARIANT
+   ============================================================================ */
+
+/* Contained - Primary */
+.button[data-variant="contained"][data-color="primary"] {
+  color: white;
+  background: var(--color-primary);
+  box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2),
+              0px 2px 2px 0px rgba(0,0,0,0.14),
+              0px 1px 5px 0px rgba(0,0,0,0.12);
+}
+
+.button[data-variant="contained"][data-color="primary"]:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+  box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),
+              0px 4px 5px 0px rgba(0,0,0,0.14),
+              0px 1px 10px 0px rgba(0,0,0,0.12);
+}
+
+.button[data-variant="contained"][data-color="primary"]:active:not(:disabled) {
+  box-shadow: 0px 5px 5px -3px rgba(0,0,0,0.2),
+              0px 8px 10px 1px rgba(0,0,0,0.14),
+              0px 3px 14px 2px rgba(0,0,0,0.12);
+}
+
+.button[data-variant="contained"][data-color="primary"]:disabled {
+  color: var(--color-action-disabled);
+  background: var(--color-action-disabled-background);
+  box-shadow: none;
+}
+
+/* Contained - Secondary */
+.button[data-variant="contained"][data-color="secondary"] {
+  color: white;
+  background: var(--color-secondary);
+  box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2),
+              0px 2px 2px 0px rgba(0,0,0,0.14),
+              0px 1px 5px 0px rgba(0,0,0,0.12);
+}
+
+.button[data-variant="contained"][data-color="secondary"]:hover:not(:disabled) {
+  background: var(--color-secondary-dark);
+  box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),
+              0px 4px 5px 0px rgba(0,0,0,0.14),
+              0px 1px 10px 0px rgba(0,0,0,0.12);
+}
+
+.button[data-variant="contained"][data-color="secondary"]:active:not(:disabled) {
+  box-shadow: 0px 5px 5px -3px rgba(0,0,0,0.2),
+              0px 8px 10px 1px rgba(0,0,0,0.14),
+              0px 3px 14px 2px rgba(0,0,0,0.12);
+}
+
+.button[data-variant="contained"][data-color="secondary"]:disabled {
+  color: var(--color-action-disabled);
+  background: var(--color-action-disabled-background);
+  box-shadow: none;
+}
+
+/* Contained - Error */
+.button[data-variant="contained"][data-color="error"] {
+  color: white;
+  background: var(--color-error);
+  box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2),
+              0px 2px 2px 0px rgba(0,0,0,0.14),
+              0px 1px 5px 0px rgba(0,0,0,0.12);
+}
+
+.button[data-variant="contained"][data-color="error"]:hover:not(:disabled) {
+  background: var(--color-error-dark);
+  box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),
+              0px 4px 5px 0px rgba(0,0,0,0.14),
+              0px 1px 10px 0px rgba(0,0,0,0.12);
+}
+
+.button[data-variant="contained"][data-color="error"]:active:not(:disabled) {
+  box-shadow: 0px 5px 5px -3px rgba(0,0,0,0.2),
+              0px 8px 10px 1px rgba(0,0,0,0.14),
+              0px 3px 14px 2px rgba(0,0,0,0.12);
+}
+
+.button[data-variant="contained"][data-color="error"]:disabled {
+  color: var(--color-action-disabled);
+  background: var(--color-action-disabled-background);
+  box-shadow: none;
+}
+
+/* Contained - Warning */
+.button[data-variant="contained"][data-color="warning"] {
+  color: white;
+  background: var(--color-warning);
+  box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2),
+              0px 2px 2px 0px rgba(0,0,0,0.14),
+              0px 1px 5px 0px rgba(0,0,0,0.12);
+}
+
+.button[data-variant="contained"][data-color="warning"]:hover:not(:disabled) {
+  background: var(--color-warning-dark);
+  box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),
+              0px 4px 5px 0px rgba(0,0,0,0.14),
+              0px 1px 10px 0px rgba(0,0,0,0.12);
+}
+
+.button[data-variant="contained"][data-color="warning"]:active:not(:disabled) {
+  box-shadow: 0px 5px 5px -3px rgba(0,0,0,0.2),
+              0px 8px 10px 1px rgba(0,0,0,0.14),
+              0px 3px 14px 2px rgba(0,0,0,0.12);
+}
+
+.button[data-variant="contained"][data-color="warning"]:disabled {
+  color: var(--color-action-disabled);
+  background: var(--color-action-disabled-background);
+  box-shadow: none;
+}
+
+/* Contained - Success */
+.button[data-variant="contained"][data-color="success"] {
+  color: white;
+  background: var(--color-success);
+  box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2),
+              0px 2px 2px 0px rgba(0,0,0,0.14),
+              0px 1px 5px 0px rgba(0,0,0,0.12);
+}
+
+.button[data-variant="contained"][data-color="success"]:hover:not(:disabled) {
+  background: var(--color-success-dark);
+  box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),
+              0px 4px 5px 0px rgba(0,0,0,0.14),
+              0px 1px 10px 0px rgba(0,0,0,0.12);
+}
+
+.button[data-variant="contained"][data-color="success"]:active:not(:disabled) {
+  box-shadow: 0px 5px 5px -3px rgba(0,0,0,0.2),
+              0px 8px 10px 1px rgba(0,0,0,0.14),
+              0px 3px 14px 2px rgba(0,0,0,0.12);
+}
+
+.button[data-variant="contained"][data-color="success"]:disabled {
+  color: var(--color-action-disabled);
+  background: var(--color-action-disabled-background);
+  box-shadow: none;
+}
+
+/* Contained - Info */
+.button[data-variant="contained"][data-color="info"] {
+  color: white;
+  background: var(--color-info);
+  box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2),
+              0px 2px 2px 0px rgba(0,0,0,0.14),
+              0px 1px 5px 0px rgba(0,0,0,0.12);
+}
+
+.button[data-variant="contained"][data-color="info"]:hover:not(:disabled) {
+  background: var(--color-info-dark);
+  box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),
+              0px 4px 5px 0px rgba(0,0,0,0.14),
+              0px 1px 10px 0px rgba(0,0,0,0.12);
+}
+
+.button[data-variant="contained"][data-color="info"]:active:not(:disabled) {
+  box-shadow: 0px 5px 5px -3px rgba(0,0,0,0.2),
+              0px 8px 10px 1px rgba(0,0,0,0.14),
+              0px 3px 14px 2px rgba(0,0,0,0.12);
+}
+
+.button[data-variant="contained"][data-color="info"]:disabled {
+  color: var(--color-action-disabled);
+  background: var(--color-action-disabled-background);
+  box-shadow: none;
+}
+
+/* Contained - Inherit */
+.button[data-variant="contained"][data-color="inherit"] {
+  color: inherit;
+  background: var(--color-background-paper);
+  box-shadow: 0px 3px 1px -2px rgba(0,0,0,0.2),
+              0px 2px 2px 0px rgba(0,0,0,0.14),
+              0px 1px 5px 0px rgba(0,0,0,0.12);
+}
+
+.button[data-variant="contained"][data-color="inherit"]:hover:not(:disabled) {
+  background: var(--color-background-hover);
+  box-shadow: 0px 2px 4px -1px rgba(0,0,0,0.2),
+              0px 4px 5px 0px rgba(0,0,0,0.14),
+              0px 1px 10px 0px rgba(0,0,0,0.12);
+}
+
+.button[data-variant="contained"][data-color="inherit"]:active:not(:disabled) {
+  box-shadow: 0px 5px 5px -3px rgba(0,0,0,0.2),
+              0px 8px 10px 1px rgba(0,0,0,0.14),
+              0px 3px 14px 2px rgba(0,0,0,0.12);
+}
+
+.button[data-variant="contained"][data-color="inherit"]:disabled {
+  color: var(--color-action-disabled);
+  background: var(--color-action-disabled-background);
+  box-shadow: none;
+}

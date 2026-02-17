@@ -1,0 +1,423 @@
+/**
+ * Theme CSS Custom Properties
+ * 
+ * This file contains all design tokens extracted from the MUI theme configuration.
+ * Values are organized by category: colors, typography, spacing, border radius, shadows, etc.
+ * Both light and dark mode variables are defined.
+ */
+
+/* ============================================================================
+   LIGHT THEME (Default)
+   ============================================================================ */
+
+:root,
+[data-theme="light"] {
+  /* --------------------------------------------------------------------------
+     Color Palette - Primary
+     -------------------------------------------------------------------------- */
+  --color-primary: #4f46e5;
+  --color-primary-light: #6366f1;
+  --color-primary-dark: #3730a3;
+  
+  /* --------------------------------------------------------------------------
+     Color Palette - Secondary
+     -------------------------------------------------------------------------- */
+  --color-secondary: #7c3aed;
+  --color-secondary-light: #8b5cf6;
+  --color-secondary-dark: #6d28d9;
+  
+  /* --------------------------------------------------------------------------
+     Color Palette - Status Colors
+     -------------------------------------------------------------------------- */
+  --color-success: #16a34a;
+  --color-success-light: #22c55e;
+  --color-success-dark: #15803d;
+  
+  --color-warning: #d97706;
+  --color-warning-light: #f59e0b;
+  --color-warning-dark: #b45309;
+  
+  --color-error: #dc2626;
+  --color-error-light: #ef4444;
+  --color-error-dark: #b91c1c;
+  
+  --color-info: #0284c7;
+  --color-info-light: #0ea5e9;
+  --color-info-dark: #0369a1;
+  
+  --color-neutral: #71717a;
+  
+  /* --------------------------------------------------------------------------
+     Background Colors
+     -------------------------------------------------------------------------- */
+  --color-background: #f8fafc;
+  --color-background-paper: #ffffff;
+  --color-background-subtle: rgba(0, 0, 0, 0.02);
+  --color-background-hover: rgba(0, 0, 0, 0.04);
+  
+  /* AppBar specific background (with transparency for backdrop blur) */
+  --color-background-appbar: rgba(255, 255, 255, 0.8);
+  
+  /* --------------------------------------------------------------------------
+     Text Colors
+     -------------------------------------------------------------------------- */
+  --color-text: #0f172a;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #64748b;
+  --color-text-disabled: #94a3b8;
+  
+  /* --------------------------------------------------------------------------
+     Border & Divider Colors
+     -------------------------------------------------------------------------- */
+  --color-divider: rgba(0, 0, 0, 0.08);
+  --color-divider-hover: rgba(0, 0, 0, 0.16);
+  --color-border: rgba(0, 0, 0, 0.08);
+  
+  /* --------------------------------------------------------------------------
+     Action Colors (for interactive states)
+     -------------------------------------------------------------------------- */
+  --color-action-hover: rgba(0, 0, 0, 0.04);
+  --color-action-subtle: rgba(0, 0, 0, 0.02);
+  --color-action-selected: rgba(0, 0, 0, 0.08);
+  --color-action-disabled: rgba(0, 0, 0, 0.26);
+  --color-action-disabled-background: rgba(0, 0, 0, 0.12);
+  
+  /* --------------------------------------------------------------------------
+     Gradients
+     -------------------------------------------------------------------------- */
+  --gradient-primary: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  --gradient-primary-hover: linear-gradient(135deg, #3730a3 0%, #6d28d9 100%);
+  
+  /* --------------------------------------------------------------------------
+     Shadows (Elevation)
+     -------------------------------------------------------------------------- */
+  --shadow-none: none;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  
+  /* MUI elevation mapping */
+  --shadow-elevation-0: none;
+  --shadow-elevation-1: var(--shadow-sm);
+  --shadow-elevation-2: var(--shadow-md);
+  --shadow-elevation-3: var(--shadow-md);
+  --shadow-elevation-4: var(--shadow-lg);
+  --shadow-elevation-8: var(--shadow-xl);
+  --shadow-elevation-16: var(--shadow-2xl);
+}
+
+/* ============================================================================
+   DARK THEME
+   ============================================================================ */
+
+[data-theme="dark"] {
+  /* --------------------------------------------------------------------------
+     Color Palette - Primary
+     -------------------------------------------------------------------------- */
+  --color-primary: #6366f1;
+  --color-primary-light: #818cf8;
+  --color-primary-dark: #4f46e5;
+  
+  /* --------------------------------------------------------------------------
+     Color Palette - Secondary
+     -------------------------------------------------------------------------- */
+  --color-secondary: #8b5cf6;
+  --color-secondary-light: #a78bfa;
+  --color-secondary-dark: #7c3aed;
+  
+  /* --------------------------------------------------------------------------
+     Color Palette - Status Colors
+     -------------------------------------------------------------------------- */
+  --color-success: #22c55e;
+  --color-success-light: #4ade80;
+  --color-success-dark: #16a34a;
+  
+  --color-warning: #f59e0b;
+  --color-warning-light: #fbbf24;
+  --color-warning-dark: #d97706;
+  
+  --color-error: #ef4444;
+  --color-error-light: #f87171;
+  --color-error-dark: #dc2626;
+  
+  --color-info: #0ea5e9;
+  --color-info-light: #38bdf8;
+  --color-info-dark: #0284c7;
+  
+  --color-neutral: #71717a;
+  
+  /* --------------------------------------------------------------------------
+     Background Colors
+     -------------------------------------------------------------------------- */
+  --color-background: #0a0a0b;
+  --color-background-paper: #141416;
+  --color-background-subtle: rgba(255, 255, 255, 0.03);
+  --color-background-hover: rgba(255, 255, 255, 0.08);
+  
+  /* AppBar specific background (with transparency for backdrop blur) */
+  --color-background-appbar: rgba(10, 10, 11, 0.8);
+  
+  /* --------------------------------------------------------------------------
+     Text Colors
+     -------------------------------------------------------------------------- */
+  --color-text: #fafafa;
+  --color-text-primary: #fafafa;
+  --color-text-secondary: #a1a1aa;
+  --color-text-disabled: #71717a;
+  
+  /* --------------------------------------------------------------------------
+     Border & Divider Colors
+     -------------------------------------------------------------------------- */
+  --color-divider: rgba(255, 255, 255, 0.12);
+  --color-divider-hover: rgba(255, 255, 255, 0.24);
+  --color-border: rgba(255, 255, 255, 0.12);
+  
+  /* --------------------------------------------------------------------------
+     Action Colors (for interactive states)
+     -------------------------------------------------------------------------- */
+  --color-action-hover: rgba(255, 255, 255, 0.08);
+  --color-action-subtle: rgba(255, 255, 255, 0.03);
+  --color-action-selected: rgba(255, 255, 255, 0.16);
+  --color-action-disabled: rgba(255, 255, 255, 0.3);
+  --color-action-disabled-background: rgba(255, 255, 255, 0.12);
+  
+  /* --------------------------------------------------------------------------
+     Gradients
+     -------------------------------------------------------------------------- */
+  --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  --gradient-primary-hover: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  
+  /* --------------------------------------------------------------------------
+     Shadows (Elevation) - Darker for dark mode
+     -------------------------------------------------------------------------- */
+  --shadow-none: none;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.5);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+  
+  /* MUI elevation mapping */
+  --shadow-elevation-0: none;
+  --shadow-elevation-1: var(--shadow-sm);
+  --shadow-elevation-2: var(--shadow-md);
+  --shadow-elevation-3: var(--shadow-md);
+  --shadow-elevation-4: var(--shadow-lg);
+  --shadow-elevation-8: var(--shadow-xl);
+  --shadow-elevation-16: var(--shadow-2xl);
+}
+
+/* ============================================================================
+   SHARED THEME VALUES (Mode-independent)
+   ============================================================================ */
+
+:root {
+  /* --------------------------------------------------------------------------
+     Spacing Scale (4px base unit)
+     -------------------------------------------------------------------------- */
+  --spacing-0: 0;
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-7: 28px;
+  --spacing-8: 32px;
+  --spacing-9: 36px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-14: 56px;
+  --spacing-16: 64px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+  
+  /* --------------------------------------------------------------------------
+     Border Radius
+     -------------------------------------------------------------------------- */
+  --border-radius-none: 0;
+  --border-radius-sm: 6px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-xl: 16px;
+  --border-radius-2xl: 24px;
+  --border-radius-full: 9999px;
+  
+  /* MUI shape.borderRadius default */
+  --border-radius-default: var(--border-radius-lg);
+  
+  /* --------------------------------------------------------------------------
+     Typography - Font Family
+     -------------------------------------------------------------------------- */
+  --font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-family-mono: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+  
+  /* --------------------------------------------------------------------------
+     Typography - Font Sizes
+     -------------------------------------------------------------------------- */
+  --font-size-xs: 0.75rem;      /* 12px - caption */
+  --font-size-sm: 0.875rem;     /* 14px - body2, button */
+  --font-size-base: 1rem;       /* 16px - body1 */
+  --font-size-lg: 1.125rem;     /* 18px */
+  --font-size-xl: 1.25rem;      /* 20px */
+  --font-size-2xl: 1.5rem;      /* 24px */
+  --font-size-3xl: 1.875rem;    /* 30px - h2 */
+  --font-size-4xl: 2.25rem;     /* 36px */
+  --font-size-5xl: 3rem;        /* 48px */
+  
+  /* MUI Typography variant sizes */
+  --font-size-h1: 2.5rem;       /* 40px */
+  --font-size-h2: 1.875rem;     /* 30px */
+  --font-size-h3: 1.5rem;       /* 24px */
+  --font-size-h4: 1.25rem;      /* 20px */
+  --font-size-h5: 1.125rem;     /* 18px */
+  --font-size-h6: 0.9375rem;    /* 15px */
+  --font-size-body1: 1rem;      /* 16px */
+  --font-size-body2: 0.875rem;  /* 14px */
+  --font-size-caption: 0.75rem; /* 12px */
+  --font-size-button: 0.875rem; /* 14px */
+  
+  /* --------------------------------------------------------------------------
+     Typography - Font Weights
+     -------------------------------------------------------------------------- */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  
+  /* MUI Typography variant weights */
+  --font-weight-h1: 600;
+  --font-weight-h2: 600;
+  --font-weight-h3: 600;
+  --font-weight-h4: 600;
+  --font-weight-h5: 600;
+  --font-weight-h6: 600;
+  --font-weight-body1: 400;
+  --font-weight-body2: 400;
+  --font-weight-button: 500;
+  
+  /* --------------------------------------------------------------------------
+     Typography - Line Heights
+     -------------------------------------------------------------------------- */
+  --line-height-none: 1;
+  --line-height-tight: 1.25;
+  --line-height-snug: 1.375;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+  --line-height-loose: 2;
+  
+  /* --------------------------------------------------------------------------
+     Typography - Letter Spacing
+     -------------------------------------------------------------------------- */
+  --letter-spacing-tighter: -0.05em;
+  --letter-spacing-tight: -0.02em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.025em;
+  --letter-spacing-wider: 0.05em;
+  --letter-spacing-widest: 0.1em;
+  
+  /* MUI h2 letter spacing */
+  --letter-spacing-h2: -0.02em;
+  
+  /* --------------------------------------------------------------------------
+     Transitions
+     -------------------------------------------------------------------------- */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slower: 500ms cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* MUI default transition */
+  --transition-default: var(--transition-base);
+  
+  /* --------------------------------------------------------------------------
+     Z-Index Scale
+     -------------------------------------------------------------------------- */
+  --z-index-base: 0;
+  --z-index-dropdown: 1000;
+  --z-index-sticky: 1020;
+  --z-index-fixed: 1030;
+  --z-index-modal-backdrop: 1040;
+  --z-index-modal: 1050;
+  --z-index-popover: 1060;
+  --z-index-tooltip: 1070;
+  --z-index-notification: 1080;
+  
+  /* MUI z-index values */
+  --z-index-appbar: 1100;
+  --z-index-drawer: 1200;
+  --z-index-dialog: 1300;
+  --z-index-snackbar: 1400;
+  
+  /* --------------------------------------------------------------------------
+     Breakpoints (for reference in media queries)
+     -------------------------------------------------------------------------- */
+  --breakpoint-xs: 0px;
+  --breakpoint-sm: 600px;
+  --breakpoint-md: 900px;
+  --breakpoint-lg: 1200px;
+  --breakpoint-xl: 1536px;
+  
+  /* --------------------------------------------------------------------------
+     Container Max Widths
+     -------------------------------------------------------------------------- */
+  --container-xs: 444px;
+  --container-sm: 600px;
+  --container-md: 900px;
+  --container-lg: 1200px;
+  --container-xl: 1536px;
+  
+  /* --------------------------------------------------------------------------
+     Component-Specific Values
+     -------------------------------------------------------------------------- */
+  
+  /* Button */
+  --button-padding-x: 16px;
+  --button-padding-y: 8px;
+  --button-border-radius: var(--border-radius-md);
+  --button-font-size: var(--font-size-sm);
+  --button-font-weight: var(--font-weight-medium);
+  --button-text-transform: none;
+  
+  /* Chip */
+  --chip-height: 24px;
+  --chip-border-radius: var(--border-radius-sm);
+  --chip-font-size: var(--font-size-xs);
+  --chip-font-weight: var(--font-weight-medium);
+  
+  /* AppBar */
+  --appbar-backdrop-filter: blur(12px);
+  
+  /* TextField */
+  --textfield-border-radius: var(--border-radius-md);
+  
+  /* Dialog */
+  --dialog-border-radius: var(--border-radius-lg);
+}
+
+/* ============================================================================
+   GLOBAL STYLES
+   ============================================================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+  background-color: var(--color-background);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: var(--font-family-mono);
+}

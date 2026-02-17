@@ -1,0 +1,55 @@
+# Starter Template - Lightweight workspace for quick experiments
+apiVersion: workspace.jupyter.org/v1alpha1
+kind: WorkspaceTemplate
+metadata:
+  name: starter
+  namespace: default
+  labels:
+    app.kubernetes.io/name: jupyter-k8s
+    app.kubernetes.io/component: template
+spec:
+  displayName: "Starter"
+  description: "Lightweight workspace for quick experiments and learning"
+  defaultImage: "uv"
+  allowedImages:
+    - "uv"
+    - "public.ecr.aws/sagemaker/sagemaker-distribution:3.2.0-cpu"
+  allowCustomImages: false
+  defaultResources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "1"
+      memory: "2Gi"
+  resourceBounds:
+    resources:
+      cpu:
+        min: "250m"
+        max: "2"
+      memory:
+        min: "512Mi"
+        max: "4Gi"
+  primaryStorage:
+    defaultSize: "5Gi"
+    minSize: "1Gi"
+    maxSize: "10Gi"
+    defaultMountPath: "/home/jovyan"
+    defaultStorageClassName: "ebs-sc"
+  allowSecondaryStorages: false
+  defaultIdleShutdown:
+    enabled: true
+    idleTimeoutInMinutes: 30
+    detection:
+      httpGet:
+        path: "/api/idle"
+        port: 8888
+  idleShutdownOverrides:
+    allow: true
+    minIdleTimeoutInMinutes: 15
+    maxIdleTimeoutInMinutes: 120
+  defaultOwnershipType: "Public"
+  defaultAccessType: "Public"
+  appType: "jupyter"
+  defaultPodSecurityContext:
+    fsGroup: 1000

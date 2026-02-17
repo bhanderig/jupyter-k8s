@@ -1,0 +1,179 @@
+/**
+ * Chip Component Styles
+ * 
+ * Provides chip styling with color, size, and variant support.
+ */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 16px;
+  font-family: var(--font-family);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1;
+  white-space: nowrap;
+  transition: background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: default;
+  border: 1px solid transparent;
+}
+
+/* Size variants */
+.chip[data-size="small"] {
+  height: 24px;
+  padding: 0 8px;
+  font-size: 0.75rem;
+}
+
+/* Clickable chips */
+.chip[data-clickable] {
+  cursor: pointer;
+}
+
+.chip[data-clickable]:hover {
+  opacity: 0.85;
+}
+
+.chip[data-clickable]:active {
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Icon */
+.icon {
+  display: inline-flex;
+  align-items: center;
+  margin-left: -4px;
+  margin-right: 6px;
+  font-size: 1.125rem;
+}
+
+.chip[data-size="small"] .icon {
+  margin-left: -2px;
+  margin-right: 4px;
+  font-size: 1rem;
+}
+
+/* Label */
+.label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Delete button */
+.deleteButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 6px;
+  margin-right: -6px;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.deleteButton:hover {
+  opacity: 1;
+}
+
+.deleteIcon {
+  width: 18px;
+  height: 18px;
+}
+
+.chip[data-size="small"] .deleteButton {
+  margin-left: 4px;
+  margin-right: -4px;
+}
+
+.chip[data-size="small"] .deleteIcon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Color variants - Filled */
+.chip[data-variant="filled"][data-color="default"] {
+  background-color: var(--color-action-hover);
+  color: var(--color-text);
+}
+
+.chip[data-variant="filled"][data-color="primary"] {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.chip[data-variant="filled"][data-color="secondary"] {
+  background-color: var(--color-secondary);
+  color: white;
+}
+
+.chip[data-variant="filled"][data-color="error"] {
+  background-color: var(--color-error);
+  color: white;
+}
+
+.chip[data-variant="filled"][data-color="warning"] {
+  background-color: var(--color-warning);
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.chip[data-variant="filled"][data-color="success"] {
+  background-color: var(--color-success);
+  color: white;
+}
+
+.chip[data-variant="filled"][data-color="info"] {
+  background-color: var(--color-info);
+  color: white;
+}
+
+/* Color variants - Outlined */
+.chip[data-variant="outlined"][data-color="default"] {
+  background-color: transparent;
+  color: var(--color-text);
+  border-color: var(--color-divider);
+}
+
+.chip[data-variant="outlined"][data-color="primary"] {
+  background-color: transparent;
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.chip[data-variant="outlined"][data-color="secondary"] {
+  background-color: transparent;
+  color: var(--color-secondary);
+  border-color: var(--color-secondary);
+}
+
+.chip[data-variant="outlined"][data-color="error"] {
+  background-color: transparent;
+  color: var(--color-error);
+  border-color: var(--color-error);
+}
+
+.chip[data-variant="outlined"][data-color="warning"] {
+  background-color: transparent;
+  color: var(--color-warning);
+  border-color: var(--color-warning);
+}
+
+.chip[data-variant="outlined"][data-color="success"] {
+  background-color: transparent;
+  color: var(--color-success);
+  border-color: var(--color-success);
+}
+
+.chip[data-variant="outlined"][data-color="info"] {
+  background-color: transparent;
+  color: var(--color-info);
+  border-color: var(--color-info);
+}
