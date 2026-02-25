@@ -1,3 +1,18 @@
 # More info: https://docs.docker.com/engine/reference/builder/#dockerignore-file
 # Ignore build and test binaries.
 bin/
+
+# Web app build artifacts and dependencies (rebuilt in Docker)
+web/node_modules/
+web/dist/
+web/.env.local
+web/.env.development.local
+
+# Git and IDE
+.git/
+.vscode/
+.devcontainer/
+
+# Go test artifacts
+cover.out
+dist/

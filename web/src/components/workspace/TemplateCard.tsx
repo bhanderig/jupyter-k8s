@@ -1,18 +1,18 @@
-import { Box, Paper, Stack, Typography } from '@/components/ui';
-import { Check, Code, Cpu, GraduationCap, FlaskConical } from 'lucide-react';
+import { Box, Paper, Stack, Typography } from '@mui/material';
+import { Check, Code, Memory, School, Science } from '@mui/icons-material';
 import type { ReactNode, KeyboardEvent } from 'react';
 import type { WorkspaceTemplate } from '../../types';
 import { strings } from '../../constants';
 import styles from './TemplateCard.module.css';
 
 const TEMPLATE_CONFIG: Record<string, { icon: ReactNode; tag: string }> = {
-  starter: { icon: <GraduationCap size={24} />, tag: 'Quick start' },
-  'data-science': { icon: <FlaskConical size={24} />, tag: 'Full stack' },
-  'ml-training': { icon: <Cpu size={24} />, tag: 'High performance' },
-  'code-editor': { icon: <Code size={24} />, tag: 'VS Code style' },
+  starter: { icon: <School />, tag: 'Quick start' },
+  'data-science': { icon: <Science />, tag: 'Full stack' },
+  'ml-training': { icon: <Memory />, tag: 'High performance' },
+  'code-editor': { icon: <Code />, tag: 'VS Code style' },
 };
 
-const DEFAULT_CONFIG = { icon: <FlaskConical size={24} />, tag: 'Custom' };
+const DEFAULT_CONFIG = { icon: <Science />, tag: 'Custom' };
 
 interface TemplateCardProps {
   template: WorkspaceTemplate;
@@ -41,7 +41,7 @@ export function TemplateCard({ template, selected, onClick }: TemplateCardProps)
       aria-pressed={selected}
       aria-label={strings.a11y.templateCard(template.displayName)}
     >
-      {selected && <Check className={styles.checkIcon} size={20} />}
+      {selected && <Check className={styles.checkIcon} />}
       <Stack direction="row" alignItems="center" gap={2}>
         <Box className={styles.icon}>{config.icon}</Box>
         <Box>

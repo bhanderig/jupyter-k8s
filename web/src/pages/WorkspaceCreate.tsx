@@ -1,11 +1,11 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Typography, TextField, Button, Slider, Autocomplete,
-  Switch, Box, Stack, ToggleButtonGroup, ToggleButton,
-  CircularProgress, Alert, Collapse,
-} from '@/components/ui';
-import { Cpu, HardDrive } from 'lucide-react';
+  Typography, TextField, Button, Slider, Autocomplete, Switch,
+  Box, Stack, ToggleButtonGroup, ToggleButton, CircularProgress,
+  Alert, Collapse,
+} from '@mui/material';
+import { Memory, Storage } from '@mui/icons-material';
 import { useCreateWorkspace, useTemplates } from '../api';
 import { TemplateCard } from '../components';
 import type { WorkspaceTemplate, CreateWorkspaceRequest } from '../types';
@@ -121,7 +121,6 @@ export function WorkspaceCreate() {
       accessStrategy: { name: 'sample-access-strategy', namespace: 'default' },
     };
 
-    // Include templateRef to allow backend webhook to apply template defaults and validation
     if (selectedTemplate) {
       request.templateRef = { name: selectedTemplate.name, namespace: selectedTemplate.namespace };
     }
@@ -177,33 +176,24 @@ export function WorkspaceCreate() {
         <Box className={styles.section}>
           <Typography className={styles.sectionLabel}>{ws.sectionResources}</Typography>
           <Stack gap={2.5}>
-            <Autocomplete freeSolo={allowCustomImages} options={availableImages}
+            <Autocomplete
+              freeSolo={allowCustomImages}
+              options={availableImages}
               getOptionLabel={(o) => (typeof o === 'string' ? o : o.value)}
               value={selectedImageValue}
               onChange={(_, v) => setImage(typeof v === 'string' ? v : v?.value ?? '')}
               onInputChange={(_, v, r) => r === 'input' && allowCustomImages && setImage(v)}
-              size="small" renderInput={(params) => {
-                const { inputProps, disabled, fullWidth } = params;
-                return (
-                  <TextField 
-                    disabled={disabled}
-                    size="small"
-                    fullWidth={fullWidth}
-                    label={ws.fieldImage}
-                    value={inputProps?.value as string}
-                    onChange={inputProps?.onChange as any}
-                    onFocus={inputProps?.onFocus as any}
-                    onBlur={inputProps?.onBlur as any}
-                    placeholder={inputProps?.placeholder}
-                  />
-                );
-              }} />
+              size="small"
+              renderInput={(params) => (
+                <TextField {...params} label={ws.fieldImage} />
+              )}
+            />
 
             {/* CPU */}
             <Box className={styles.resourceBlock}>
               <Stack direction="row" alignItems="center" justifyContent="space-between">
                 <Stack direction="row" alignItems="center" gap={1}>
-                  <Cpu className={styles.resourceIcon} size={20} />
+                  <Memory className={styles.resourceIcon} sx={{ fontSize: 20 }} />
                   <Typography variant="body2">{ws.resourceCpu}</Typography>
                 </Stack>
                 <Typography className={styles.resourceValue}>{cpuLimit} {common.cores}</Typography>
@@ -212,8 +202,8 @@ export function WorkspaceCreate() {
                 min={resourceBounds.cpu.min} max={resourceBounds.cpu.max} step={resourceBounds.cpu.step}
                 size="small" aria-label={ws.resourceCpu} />
               <Stack direction="row" justifyContent="space-between">
-                <Typography variant="caption" color="textSecondary">{resourceBounds.cpu.min} {common.cores}</Typography>
-                <Typography variant="caption" color="textSecondary">{resourceBounds.cpu.max} {common.cores}</Typography>
+                <Typography variant="caption" color="text.secondary">{resourceBounds.cpu.min} {common.cores}</Typography>
+                <Typography variant="caption" color="text.secondary">{resourceBounds.cpu.max} {common.cores}</Typography>
               </Stack>
             </Box>
 
@@ -221,7 +211,7 @@ export function WorkspaceCreate() {
             <Box className={styles.resourceBlock}>
               <Stack direction="row" alignItems="center" justifyContent="space-between">
                 <Stack direction="row" alignItems="center" gap={1}>
-                  <HardDrive className={styles.resourceIcon} size={20} />
+                  <Storage className={styles.resourceIcon} sx={{ fontSize: 20 }} />
                   <Typography variant="body2">{ws.resourceMemory}</Typography>
                 </Stack>
                 <Typography className={styles.resourceValue}>{memoryLimit} {common.gb}</Typography>
@@ -230,8 +220,8 @@ export function WorkspaceCreate() {
                 min={resourceBounds.memory.min} max={resourceBounds.memory.max} step={resourceBounds.memory.step}
                 size="small" aria-label={ws.resourceMemory} />
               <Stack direction="row" justifyContent="space-between">
-                <Typography variant="caption" color="textSecondary">{resourceBounds.memory.min} {common.gb}</Typography>
-                <Typography variant="caption" color="textSecondary">{resourceBounds.memory.max} {common.gb}</Typography>
+                <Typography variant="caption" color="text.secondary">{resourceBounds.memory.min} {common.gb}</Typography>
+                <Typography variant="caption" color="text.secondary">{resourceBounds.memory.max} {common.gb}</Typography>
               </Stack>
             </Box>
 
@@ -239,7 +229,7 @@ export function WorkspaceCreate() {
             <Box className={styles.resourceBlock}>
               <Stack direction="row" alignItems="center" justifyContent="space-between">
                 <Stack direction="row" alignItems="center" gap={1}>
-                  <HardDrive className={styles.resourceIcon} size={20} />
+                  <Storage className={styles.resourceIcon} sx={{ fontSize: 20 }} />
                   <Typography variant="body2">{ws.resourceStorage}</Typography>
                 </Stack>
                 <Typography className={styles.resourceValue}>{storageSize} {common.gb}</Typography>
@@ -248,8 +238,8 @@ export function WorkspaceCreate() {
                 min={resourceBounds.storage.min} max={resourceBounds.storage.max} step={resourceBounds.storage.step}
                 size="small" aria-label={ws.resourceStorage} />
               <Stack direction="row" justifyContent="space-between">
-                <Typography variant="caption" color="textSecondary">{resourceBounds.storage.min} {common.gb}</Typography>
-                <Typography variant="caption" color="textSecondary">{resourceBounds.storage.max} {common.gb}</Typography>
+                <Typography variant="caption" color="text.secondary">{resourceBounds.storage.min} {common.gb}</Typography>
+                <Typography variant="caption" color="text.secondary">{resourceBounds.storage.max} {common.gb}</Typography>
               </Stack>
             </Box>
 
@@ -262,7 +252,6 @@ export function WorkspaceCreate() {
         <Box className={styles.section}>
           <Typography className={styles.sectionLabel}>{ws.sectionSettings}</Typography>
           <Stack gap={1}>
-            {/* Access Type */}
             <Box className={styles.settingRow}>
               <Typography variant="body2">Access</Typography>
               <ToggleButtonGroup
@@ -287,18 +276,17 @@ export function WorkspaceCreate() {
 
             <Box className={styles.divider} />
 
-            {/* Idle Shutdown */}
             <Box className={styles.settingRow}>
               <Box>
                 <Typography variant="body2">{ws.idleShutdownEnable}</Typography>
                 {idleShutdownEnabled && (
-                  <Typography variant="caption" color="textSecondary">
+                  <Typography variant="caption" color="text.secondary">
                     Shutdown after {idleTimeoutMinutes} {common.min} of inactivity
                   </Typography>
                 )}
               </Box>
               <Switch size="small" checked={idleShutdownEnabled} onChange={(e) => setIdleShutdownEnabled(e.target.checked)}
-                slotProps={{ input: { 'aria-label': ws.idleShutdownEnable } }} />
+                inputProps={{ 'aria-label': ws.idleShutdownEnable }} />
             </Box>
 
             <Collapse in={idleShutdownEnabled}>
@@ -307,8 +295,8 @@ export function WorkspaceCreate() {
                   min={idleShutdownBounds.min} max={idleShutdownBounds.max} step={IDLE_SHUTDOWN_DEFAULTS.STEP}
                   size="small" aria-label={ws.idleShutdownTimeout} />
                 <Stack direction="row" justifyContent="space-between">
-                  <Typography variant="caption" color="textSecondary">{idleShutdownBounds.min} {common.min}</Typography>
-                  <Typography variant="caption" color="textSecondary">{idleShutdownBounds.max} {common.min}</Typography>
+                  <Typography variant="caption" color="text.secondary">{idleShutdownBounds.min} {common.min}</Typography>
+                  <Typography variant="caption" color="text.secondary">{idleShutdownBounds.max} {common.min}</Typography>
                 </Stack>
               </Box>
             </Collapse>

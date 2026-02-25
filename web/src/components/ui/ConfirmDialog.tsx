@@ -1,4 +1,6 @@
-import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@/components/ui';
+import {
+  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button,
+} from '@mui/material';
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -29,7 +31,7 @@ export function ConfirmDialog({
       <DialogContent>
         <DialogContentText id="confirm-dialog-description">{message}</DialogContentText>
       </DialogContent>
-      <DialogActions style={{ padding: '16px 24px' }}>
+      <DialogActions sx={{ px: 3, pb: 2 }}>
         <Button onClick={onCancel} variant="outlined" disabled={isLoading}>{cancelLabel}</Button>
         <Button onClick={onConfirm} variant="contained" color={isDestructive ? 'error' : 'primary'} disabled={isLoading}>
           {isLoading ? 'Deleting...' : confirmLabel}

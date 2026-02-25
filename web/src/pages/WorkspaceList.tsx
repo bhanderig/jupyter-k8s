@@ -1,7 +1,10 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Typography, Button, Grid, CircularProgress, ToggleButtonGroup, ToggleButton, InputBase, Stack, Paper } from '../components/ui';
-import { Plus, Search } from 'lucide-react';
+import {
+  Box, Typography, Button, Grid, CircularProgress, ToggleButtonGroup,
+  ToggleButton, InputBase, Stack, Paper,
+} from '@mui/material';
+import { Add, Search } from '@mui/icons-material';
 import { useWorkspaces } from '../api';
 import { useAuth } from '../context';
 import { WorkspaceCard } from '../components';
@@ -18,49 +21,33 @@ export function WorkspaceList() {
   const filteredWorkspaces = useMemo(() => {
     if (!workspaces) return [];
 
-    console.log('Filter debug:', {
-      filter,
-      username: user?.username,
-      totalWorkspaces: workspaces.length,
-      workspaceOwners: workspaces.map(ws => ({
-        name: ws.metadata.name,
-        owner: ws.metadata.annotations?.['workspace.jupyter.org/created-by']
-      }))
-    });
-
     return workspaces.filter((ws) => {
-      // Apply owner filter
       if (filter === 'mine') {
         const owner = ws.metadata.annotations?.['workspace.jupyter.org/created-by'];
         if (!owner || !user?.username) return false;
-        
-        // Handle different owner formats:
-        // - "github:username"
-        // - "username"
-        // - "arn:aws:sts::account:assumed-role/Role/username"
-        const isOwner = 
-          owner === user.username || // Direct match
-          owner === `github:${user.username}` || // GitHub format
-          owner.endsWith(`/${user.username}`) || // AWS ARN format
-          owner.includes(`:${user.username}`); // Other formats
-        
+
+        const isOwner =
+          owner === user.username ||
+          owner === `github:${user.username}` ||
+          owner.endsWith(`/${user.username}`) ||
+          owner.includes(`:${user.username}`);
+
         if (!isOwner) return false;
       }
-      
-      // Apply search filter
+
       if (search) {
         const q = search.toLowerCase();
-        const matchesSearch = ws.spec.displayName.toLowerCase().includes(q) || 
+        const matchesSearch = ws.spec.displayName.toLowerCase().includes(q) ||
                              ws.metadata.name.toLowerCase().includes(q);
         if (!matchesSearch) return false;
       }
-      
+
       return true;
     });
   }, [workspaces, filter, user?.username, search]);
 
-  const handleFilterChange = (_: React.MouseEvent<HTMLElement>, value: string | string[]) => {
-    if (value && typeof value === 'string' && (value === 'all' || value === 'mine')) {
+  const handleFilterChange = (_: React.MouseEvent<HTMLElement>, value: string | null) => {
+    if (value && (value === 'all' || value === 'mine')) {
       setFilter(value);
     }
   };
@@ -83,17 +70,17 @@ export function WorkspaceList() {
 
   return (
     <Box>
-      <Box sx={{ marginBottom: '32px' }}>
-        <Typography variant="h2" sx={{ marginBottom: '8px' }}>{strings.workspace.listTitle}</Typography>
-        <Typography variant="body2" color="textSecondary">
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h2" sx={{ mb: 1 }}>{strings.workspace.listTitle}</Typography>
+        <Typography variant="body2" color="text.secondary">
           {strings.workspace.listDescription}
         </Typography>
       </Box>
 
-      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ marginBottom: '24px', flexWrap: 'wrap' }} gap={2}>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3, flexWrap: 'wrap' }} gap={2}>
         <Stack direction="row" gap={2} alignItems="center">
           <Paper className={styles.searchContainer} elevation={0}>
-            <Search className={styles.searchIcon} size={20} />
+            <Search className={styles.searchIcon} sx={{ fontSize: 20, mr: 1, color: 'text.secondary' }} />
             <InputBase
               placeholder={strings.workspace.searchPlaceholder}
               value={search}
@@ -115,21 +102,21 @@ export function WorkspaceList() {
           </ToggleButtonGroup>
         </Stack>
 
-        <Button variant="contained" startIcon={<Plus size={20} />} onClick={handleCreateClick} className={styles.gradientButton}>
+        <Button variant="contained" startIcon={<Add />} onClick={handleCreateClick} className={styles.gradientButton}>
           {strings.workspace.newWorkspace}
         </Button>
       </Stack>
 
       {isEmpty ? (
         <Paper className={styles.emptyState} elevation={0}>
-          <Typography variant="h6" color="textSecondary" gutterBottom>
+          <Typography variant="h6" color="text.secondary" gutterBottom>
             {search ? strings.workspace.noWorkspacesFound : strings.workspace.noWorkspacesYet}
           </Typography>
-          <Typography variant="body2" color="textSecondary" className={styles.emptyStateDescription}>
+          <Typography variant="body2" color="text.secondary" className={styles.emptyStateDescription}>
             {search ? strings.workspace.noWorkspacesSearchDescription : strings.workspace.noWorkspacesDescription}
           </Typography>
           {!search && (
-            <Button variant="outlined" startIcon={<Plus size={20} />} onClick={handleCreateClick}>
+            <Button variant="outlined" startIcon={<Add />} onClick={handleCreateClick}>
               {strings.workspace.createWorkspace}
             </Button>
           )}
