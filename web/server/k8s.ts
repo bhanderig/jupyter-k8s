@@ -57,7 +57,6 @@ function isLocalDevelopment(): boolean {
 }
 
 // --- KubeConfig Factory ---
-// Shared between REST client creation and Watch API setup.
 
 export function createKubeConfig(jwt: string | null): KubeConfig {
   const kc = new KubeConfig();
