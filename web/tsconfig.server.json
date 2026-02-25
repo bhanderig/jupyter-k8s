@@ -22,5 +22,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["server-bun/**/*", "vite.config.ts"]
+  "include": ["server/**/*", "vite.config.ts"]
 }

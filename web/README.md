@@ -111,7 +111,7 @@ web/
 │   ├── types/               # TypeScript type definitions
 │   ├── utils/               # Utility functions
 │   └── main.tsx             # Application entry point
-├── server-bun/              # Backend server (Bun)
+├── server/              # Backend server (Bun)
 │   ├── index.ts             # Server entry point
 │   └── k8s.ts               # Kubernetes client utilities
 ├── public/                  # Static assets
@@ -289,7 +289,7 @@ If you discover a security vulnerability, please email the maintainers directly 
 
 ### Request/Response Examples
 
-See [server-bun/README.md](./server-bun/README.md) for detailed API documentation.
+See [server/README.md](./server/README.md) for detailed API documentation.
 
 ## 🐛 Troubleshooting
 
