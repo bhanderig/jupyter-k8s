@@ -1,4 +1,6 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { ThemeProvider as MuiThemeProvider, CssBaseline } from '@mui/material';
+import { lightTheme, darkTheme } from '../theme';
 
 type ThemeName = 'light' | 'dark';
 
@@ -26,9 +28,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const setTheme = (newTheme: ThemeName) => setThemeState(newTheme);
   const toggleTheme = () => setThemeState((t) => (t === 'light' ? 'dark' : 'light'));
 
+  const muiTheme = theme === 'dark' ? darkTheme : lightTheme;
+
   return (
     <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
-      {children}
+      <MuiThemeProvider theme={muiTheme}>
+        <CssBaseline />
+        {children}
+      </MuiThemeProvider>
     </ThemeContext.Provider>
   );
 }

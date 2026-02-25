@@ -1,11 +1,11 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Typography, Button, Chip, CircularProgress, Box, Stack, Paper,
-} from '../components/ui';
+} from '@mui/material';
 import {
-  ArrowLeft, Play, Square, ExternalLink, Cpu, HardDrive,
-  CheckCircle, AlertCircle, Clock, Info,
-} from 'lucide-react';
+  ArrowBack, PlayArrow, Stop, OpenInNew, Memory, Storage,
+  CheckCircle, Error as ErrorIcon, Schedule, Info,
+} from '@mui/icons-material';
 import { useWorkspace, useStartWorkspace, useStopWorkspace } from '../api';
 import { useAuth } from '../context';
 import type { WorkspaceCondition } from '../types';
@@ -14,11 +14,11 @@ import styles from './WorkspaceDetail.module.css';
 
 function getConditionIcon(type: string, status: string) {
   if (status === 'True') {
-    if (type === 'Available') return <CheckCircle size={20} color="var(--color-success)" />;
-    if (type === 'Progressing') return <Clock size={20} color="var(--color-info)" />;
-    if (type === 'Degraded') return <AlertCircle size={20} color="var(--color-error)" />;
+    if (type === 'Available') return <CheckCircle sx={{ color: 'success.main' }} />;
+    if (type === 'Progressing') return <Schedule sx={{ color: 'info.main' }} />;
+    if (type === 'Degraded') return <ErrorIcon sx={{ color: 'error.main' }} />;
   }
-  return <Info size={20} color="var(--color-text-disabled)" />;
+  return <Info sx={{ color: 'text.disabled' }} />;
 }
 
 function ConditionCard({ condition }: { condition: WorkspaceCondition }) {
@@ -32,8 +32,8 @@ function ConditionCard({ condition }: { condition: WorkspaceCondition }) {
         {getConditionIcon(condition.type, condition.status)}
         <Box>
           <Typography variant="subtitle2">{condition.type}</Typography>
-          <Typography variant="body2" color="textSecondary">{condition.reason}</Typography>
-          <Typography variant="caption" color="textSecondary">{condition.message}</Typography>
+          <Typography variant="body2" color="text.secondary">{condition.reason}</Typography>
+          <Typography variant="caption" color="text.secondary">{condition.message}</Typography>
         </Box>
       </Stack>
     </Paper>
@@ -43,7 +43,7 @@ function ConditionCard({ condition }: { condition: WorkspaceCondition }) {
 function InfoRow({ label, value }: { label: React.ReactNode; value: React.ReactNode }) {
   return (
     <Stack direction="row" className={styles.infoRow}>
-      <Typography variant="body2" color="textSecondary" className={styles.infoLabel} component="div">
+      <Typography variant="body2" color="text.secondary" className={styles.infoLabel} component="div">
         {label}
       </Typography>
       <Typography variant="body2" className={styles.infoValue} component="div">{value}</Typography>
@@ -70,7 +70,7 @@ export function WorkspaceDetail() {
   if (error || !workspace) {
     return (
       <Box className={styles.container}>
-        <Button startIcon={<ArrowLeft size={20} />} onClick={() => navigate('/')}>
+        <Button startIcon={<ArrowBack />} onClick={() => navigate('/')}>
           {strings.common.back}
         </Button>
         <Paper className={styles.errorCard}>
@@ -91,28 +91,25 @@ export function WorkspaceDetail() {
   );
   const accessURL = workspace.status?.accessURL;
 
-  // Check ownership and access
   const owner = workspace.metadata.annotations?.['workspace.jupyter.org/created-by'];
   const isOwner = owner && user?.username && (
-    owner === user.username || // Direct match
-    owner === `github:${user.username}` || // GitHub format
-    owner.endsWith(`/${user.username}`) || // AWS ARN format
-    owner.includes(`:${user.username}`) // Other formats
+    owner === user.username ||
+    owner === `github:${user.username}` ||
+    owner.endsWith(`/${user.username}`) ||
+    owner.includes(`:${user.username}`)
   );
   const canOpen = isRunning && isAvailable && accessURL && (isOwner || workspace.spec.accessType === 'Public');
 
   const handleStart = () => startMutation.mutate(workspace.metadata.name);
   const handleStop = () => stopMutation.mutate(workspace.metadata.name);
   const handleOpen = () => {
-    if (accessURL) {
-      window.open(accessURL, '_blank');
-    }
+    if (accessURL) window.open(accessURL, '_blank');
   };
 
   return (
     <Box className={styles.container}>
       <Button
-        startIcon={<ArrowLeft size={20} />}
+        startIcon={<ArrowBack />}
         onClick={() => navigate('/')}
         className={styles.backButton}
       >
@@ -122,14 +119,14 @@ export function WorkspaceDetail() {
       <Stack direction="row" alignItems="center" justifyContent="space-between" className={styles.header}>
         <Box>
           <Typography variant="h4">{workspace.spec.displayName}</Typography>
-          <Typography variant="body2" color="textSecondary">{workspace.metadata.name}</Typography>
+          <Typography variant="body2" color="text.secondary">{workspace.metadata.name}</Typography>
         </Box>
         <Stack direction="row" gap={1}>
           {isOwner && (
             isRunning ? (
               <Button
                 variant="outlined"
-                startIcon={<Square size={20} />}
+                startIcon={<Stop />}
                 onClick={handleStop}
                 disabled={stopMutation.isPending}
               >
@@ -138,7 +135,7 @@ export function WorkspaceDetail() {
             ) : (
               <Button
                 variant="contained"
-                startIcon={<Play size={20} />}
+                startIcon={<PlayArrow />}
                 onClick={handleStart}
                 disabled={startMutation.isPending}
               >
@@ -147,7 +144,7 @@ export function WorkspaceDetail() {
             )
           )}
           {canOpen && (
-            <Button variant="contained" startIcon={<ExternalLink size={20} />} onClick={handleOpen}>
+            <Button variant="contained" startIcon={<OpenInNew />} onClick={handleOpen}>
               {strings.workspace.openWorkspace}
             </Button>
           )}
@@ -164,7 +161,7 @@ export function WorkspaceDetail() {
               {workspace.status?.conditions?.map((condition) => (
                 <ConditionCard key={condition.type} condition={condition} />
               )) ?? (
-                <Typography variant="body2" color="textSecondary">
+                <Typography variant="body2" color="text.secondary">
                   No conditions available
                 </Typography>
               )}
@@ -205,11 +202,11 @@ export function WorkspaceDetail() {
             </Typography>
             <Stack gap={1}>
               <InfoRow
-                label={<Stack direction="row" alignItems="center" gap={0.5}><Cpu size={16} /> CPU</Stack>}
+                label={<Stack direction="row" alignItems="center" gap={0.5}><Memory sx={{ fontSize: 16 }} /> CPU</Stack>}
                 value={workspace.spec.resources.limits.cpu}
               />
               <InfoRow
-                label={<Stack direction="row" alignItems="center" gap={0.5}><HardDrive size={16} /> Memory</Stack>}
+                label={<Stack direction="row" alignItems="center" gap={0.5}><Storage sx={{ fontSize: 16 }} /> Memory</Stack>}
                 value={workspace.spec.resources.limits.memory}
               />
             </Stack>

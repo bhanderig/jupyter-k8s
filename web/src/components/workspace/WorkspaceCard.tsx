@@ -1,8 +1,11 @@
 import {
   Card, CardContent, Typography, IconButton, Chip, Tooltip, Menu, MenuItem,
   ListItemIcon, Stack, Box, Divider,
-} from '../ui';
-import { Play, Square, ExternalLink, MoreVertical, Trash2, Circle, Cpu, HardDrive, Info } from 'lucide-react';
+} from '@mui/material';
+import {
+  PlayArrow, Stop, OpenInNew, MoreVert, Delete, Circle, Memory,
+  Storage, Info,
+} from '@mui/icons-material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Workspace } from '../../types';
@@ -32,16 +35,14 @@ export function WorkspaceCard({ workspace }: WorkspaceCardProps) {
   const isPending = isRunning && !isAvailable;
   const accessURL = status?.accessURL;
 
-  // Check if current user owns this workspace
   const owner = metadata.annotations?.['workspace.jupyter.org/created-by'];
   const isOwner = owner && user?.username && (
-    owner === user.username || // Direct match
-    owner === `github:${user.username}` || // GitHub format
-    owner.endsWith(`/${user.username}`) || // AWS ARN format
-    owner.includes(`:${user.username}`) // Other formats
+    owner === user.username ||
+    owner === `github:${user.username}` ||
+    owner.endsWith(`/${user.username}`) ||
+    owner.includes(`:${user.username}`)
   );
 
-  // Can open if running + available + (owner OR public)
   const canOpen = isRunning && isAvailable && accessURL && (isOwner || spec.accessType === 'Public');
 
   const statusColor = getStatusColor(isRunning, isAvailable, isPending);
@@ -73,22 +74,22 @@ export function WorkspaceCard({ workspace }: WorkspaceCardProps) {
     <>
       <Card className={styles.card} aria-label={strings.a11y.workspaceCard(spec.displayName, statusText)}>
         <CardContent className={styles.cardContent}>
-          <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ marginBottom: '16px' }}>
+          <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 2 }}>
             <Box sx={{ flex: 1, minWidth: 0 }}>
-              <Typography variant="h6" component="h3" noWrap sx={{ marginBottom: '4px' }}>{spec.displayName}</Typography>
-              <Typography variant="body2" color="textSecondary">{metadata.name}</Typography>
+              <Typography variant="h6" component="h3" noWrap sx={{ mb: 0.5 }}>{spec.displayName}</Typography>
+              <Typography variant="body2" color="text.secondary">{metadata.name}</Typography>
             </Box>
             <IconButton size="small" onClick={handleMenuOpen} aria-label={strings.workspace.moreOptions}>
-              <MoreVertical size={20} />
+              <MoreVert />
             </IconButton>
           </Stack>
 
-          <Stack direction="row" alignItems="center" gap={1} sx={{ marginBottom: '20px', flexWrap: 'wrap' }}>
+          <Stack direction="row" alignItems="center" gap={1} sx={{ mb: 2.5, flexWrap: 'wrap' }}>
             <Chip
-              icon={<Circle className={styles.statusIcon} style={{ color: statusColor }} />}
+              icon={<Circle sx={{ fontSize: 8, color: statusColor }} />}
               label={statusText}
               size="small"
-              style={{ backgroundColor: `${statusColor}1a`, color: statusColor, border: 'none' }}
+              sx={{ bgcolor: `${statusColor}1a`, color: statusColor, border: 'none' }}
             />
             <Chip label={spec.image} size="small" variant="outlined" className={styles.imageChip} />
             {spec.accessType === 'OwnerOnly' && (
@@ -96,13 +97,13 @@ export function WorkspaceCard({ workspace }: WorkspaceCardProps) {
             )}
           </Stack>
 
-          <Stack direction="row" gap={2} sx={{ color: 'var(--color-text-secondary)' }}>
+          <Stack direction="row" gap={2} sx={{ color: 'text.secondary' }}>
             <Stack direction="row" alignItems="center" gap={0.5}>
-              <Cpu size={16} className={styles.resourceIcon} aria-hidden />
+              <Memory sx={{ fontSize: 16 }} />
               <Typography variant="caption">{spec.resources.limits.cpu} CPU</Typography>
             </Stack>
             <Stack direction="row" alignItems="center" gap={0.5}>
-              <HardDrive size={16} className={styles.resourceIcon} aria-hidden />
+              <Storage sx={{ fontSize: 16 }} />
               <Typography variant="caption">{spec.resources.limits.memory}</Typography>
             </Stack>
           </Stack>
@@ -111,13 +112,13 @@ export function WorkspaceCard({ workspace }: WorkspaceCardProps) {
         <Box className={styles.actions}>
           <Tooltip title={strings.workspace.viewDetails}>
             <IconButton size="small" onClick={handleViewDetails} aria-label={strings.workspace.viewDetails}>
-              <Info size={20} />
+              <Info fontSize="small" />
             </IconButton>
           </Tooltip>
           {canOpen && (
             <Tooltip title={strings.workspace.openWorkspace}>
               <IconButton size="small" onClick={handleOpen} aria-label={strings.workspace.openWorkspace} color="primary">
-                <ExternalLink size={20} />
+                <OpenInNew fontSize="small" />
               </IconButton>
             </Tooltip>
           )}
@@ -126,7 +127,7 @@ export function WorkspaceCard({ workspace }: WorkspaceCardProps) {
               <Tooltip title={strings.workspace.stop}>
                 <span>
                   <IconButton size="small" onClick={handleStop} disabled={stopMutation.isPending} aria-label={strings.workspace.stop}>
-                    <Square size={20} />
+                    <Stop fontSize="small" />
                   </IconButton>
                 </span>
               </Tooltip>
@@ -134,7 +135,7 @@ export function WorkspaceCard({ workspace }: WorkspaceCardProps) {
               <Tooltip title={strings.workspace.start}>
                 <span>
                   <IconButton size="small" onClick={handleStart} disabled={startMutation.isPending} aria-label={strings.workspace.start} color="primary">
-                    <Play size={20} />
+                    <PlayArrow fontSize="small" />
                   </IconButton>
                 </span>
               </Tooltip>
@@ -144,13 +145,13 @@ export function WorkspaceCard({ workspace }: WorkspaceCardProps) {
 
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
           <MenuItem onClick={handleViewDetails}>
-            <ListItemIcon><Info size={20} /></ListItemIcon>
+            <ListItemIcon><Info fontSize="small" /></ListItemIcon>
             <Typography variant="body2">{strings.workspace.viewDetails}</Typography>
           </MenuItem>
           {isOwner && <Divider />}
           {isOwner && (
             <MenuItem onClick={handleDeleteClick}>
-              <ListItemIcon><Trash2 size={20} color="var(--color-error)" /></ListItemIcon>
+              <ListItemIcon><Delete fontSize="small" color="error" /></ListItemIcon>
               <Typography variant="body2" color="error">{strings.common.delete}</Typography>
             </MenuItem>
           )}
