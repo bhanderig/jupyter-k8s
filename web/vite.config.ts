@@ -32,10 +32,8 @@ export default defineConfig({
         manualChunks: {
           // React core
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          // BaseUI
-          'vendor-baseui': ['@base-ui/react'],
-          // Icons
-          'vendor-icons': ['lucide-react'],
+          // MUI
+          'vendor-mui': ['@mui/material', '@mui/icons-material'],
           // Data fetching
           'vendor-query': ['@tanstack/react-query'],
         },

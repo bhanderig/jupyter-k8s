@@ -1,5 +1,5 @@
-import { IconButton, Tooltip } from '@/components/ui';
-import { Moon, Sun } from 'lucide-react';
+import { IconButton, Tooltip } from '@mui/material';
+import { DarkMode, LightMode } from '@mui/icons-material';
 import { useTheme } from '../../context';
 import { strings } from '../../constants';
 
@@ -10,7 +10,7 @@ export function ThemeSwitcher() {
   return (
     <Tooltip title={isDark ? strings.theme.switchToLight : strings.theme.switchToDark}>
       <IconButton size="small" onClick={toggleTheme} aria-label={strings.theme.toggle}>
-        {isDark ? <Sun size={20} /> : <Moon size={20} />}
+        {isDark ? <LightMode fontSize="small" /> : <DarkMode fontSize="small" />}
       </IconButton>
     </Tooltip>
   );

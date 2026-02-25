@@ -1,5 +1,8 @@
 import { Outlet, Link } from 'react-router-dom';
-import { AppBar, Toolbar, Typography, Container, Avatar, IconButton, Tooltip, Skeleton, Box, Stack } from '@/components/ui';
+import {
+  AppBar, Toolbar, Typography, Container, Avatar, IconButton,
+  Tooltip, Skeleton, Box, Stack,
+} from '@mui/material';
 import { useAuth } from '../../context';
 import { ThemeSwitcher } from '../ui/ThemeSwitcher';
 import { strings } from '../../constants';
@@ -9,13 +12,18 @@ export function Layout() {
   const { user, isLoading } = useAuth();
 
   return (
-    <Box 
-      display="flex" 
-      flexDirection="column" 
-      minHeight="100vh" 
-      sx={{ backgroundColor: 'var(--color-background)' }}
-    >
-      <AppBar position="fixed" elevation={0} component="header">
+    <Box display="flex" flexDirection="column" minHeight="100vh">
+      <AppBar
+        position="fixed"
+        elevation={0}
+        component="header"
+        sx={{
+          bgcolor: 'rgba(var(--appbar-bg, 255, 255, 255), 0.8)',
+          backdropFilter: 'blur(12px)',
+          borderBottom: 1,
+          borderColor: 'divider',
+        }}
+      >
         <Toolbar className={styles.toolbar}>
           <Link to="/" className={styles.logoLink} aria-label={strings.a11y.homeLink}>
             <Box className={styles.logoBox} aria-hidden="true">

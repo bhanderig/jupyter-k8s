@@ -1,6 +1,6 @@
 import { Component, type ReactNode } from 'react';
-import { Typography, Button, Box } from '@/components/ui';
-import { AlertCircle } from 'lucide-react';
+import { Typography, Button, Box } from '@mui/material';
+import { ErrorOutline } from '@mui/icons-material';
 import { strings } from '../../constants';
 
 interface Props {
@@ -40,16 +40,13 @@ export class ErrorBoundary extends Component<Props, State> {
           alignItems="center"
           justifyContent="center"
           minHeight="100vh"
-          padding={4}
-          sx={{ 
-            backgroundColor: 'var(--bg-default)',
-            textAlign: 'center'
-          }}
+          p={4}
+          sx={{ textAlign: 'center' }}
         >
-          <AlertCircle color="var(--color-error)" size={64} style={{ marginBottom: 16 }} />
+          <ErrorOutline color="error" sx={{ fontSize: 64, mb: 2 }} />
           <Typography variant="h4" gutterBottom>{strings.error.title}</Typography>
           <Box maxWidth={400}>
-            <Typography variant="body2" color="textSecondary" sx={{ marginBottom: '1rem' }}>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
               {strings.error.description}
             </Typography>
           </Box>
