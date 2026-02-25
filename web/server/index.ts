@@ -1,8 +1,6 @@
 import { serve } from 'bun';
-import { Watch } from '@kubernetes/client-node';
 import {
   createUserK8sClient,
-  createKubeConfig,
   workspaceToResponse,
   templateToResponse,
   initializeConfig,
@@ -205,141 +203,6 @@ async function handleGetMe(req: Request): Promise<Response> {
   });
 }
 
-// --- SSE Handler ---
-
-async function handleSSE(req: Request): Promise<Response> {
-  const jwt = extractJWT(req);
-  log('info', 'SSE connection established');
-
-  const stream = new ReadableStream({
-    start(controller) {
-      const encoder = new TextEncoder();
-      let aborted = false;
-      let watchRequest: { abort: () => void } | null = null;
-      let pollTimer: ReturnType<typeof setInterval> | null = null;
-
-      const cleanup = () => {
-        aborted = true;
-        if (watchRequest) {
-          try { watchRequest.abort(); } catch { /* ignore */ }
-          watchRequest = null;
-        }
-        if (pollTimer) {
-          clearInterval(pollTimer);
-          pollTimer = null;
-        }
-      };
-
-      controller.enqueue(encoder.encode(': connected\n\n'));
-
-      const sendWorkspaces = (workspaces: K8sWorkspace[]) => {
-        if (aborted) return;
-        try {
-          const data = JSON.stringify({
-            type: 'workspaces',
-            data: workspaces.map(workspaceToResponse),
-          });
-          controller.enqueue(encoder.encode(`data: ${data}\n\n`));
-          log('debug', `Sent ${workspaces.length} workspaces via SSE`);
-        } catch (error) {
-          log('error', 'Error sending workspaces via SSE:', error);
-        }
-      };
-
-      const startWatch = async () => {
-        if (aborted) return;
-
-        try {
-          const k8sClient = await createUserK8sClient(jwt);
-
-          const initialResponse = await k8sClient.listNamespacedCustomObject(
-            'workspace.jupyter.org', 'v1alpha1', serverConfig.namespace, 'workspaces'
-          );
-          const initialBody = initialResponse.body as K8sListResponse<K8sWorkspace>;
-          sendWorkspaces(initialBody.items);
-
-          const kc = createKubeConfig(jwt);
-          const watch = new Watch(kc);
-          const path = `/apis/workspace.jupyter.org/v1alpha1/namespaces/${serverConfig.namespace}/workspaces`;
-
-          log('info', `Starting K8s watch on ${path}`);
-
-          const watchReq = await watch.watch(
-            path,
-            {},
-            async (_type: string) => {
-              if (aborted) return;
-              log('debug', `K8s watch event: ${_type}`);
-
-              try {
-                const response = await k8sClient.listNamespacedCustomObject(
-                  'workspace.jupyter.org', 'v1alpha1', serverConfig.namespace, 'workspaces'
-                );
-                const body = response.body as K8sListResponse<K8sWorkspace>;
-                sendWorkspaces(body.items);
-              } catch (error) {
-                log('error', 'Error fetching workspaces after watch event:', error);
-              }
-            },
-            (err: unknown) => {
-              if (aborted) return;
-
-              if (err) {
-                log('error', 'K8s watch error:', err);
-              } else {
-                log('info', 'K8s watch ended normally');
-              }
-
-              if (!aborted) {
-                log('info', 'Reconnecting K8s watch in 5 seconds...');
-                setTimeout(() => startWatch(), 5000);
-              }
-            }
-          );
-
-          watchRequest = watchReq;
-        } catch (error) {
-          log('error', 'Error starting K8s watch:', error);
-
-          if (!aborted) {
-            log('warn', 'Falling back to polling mode');
-            pollTimer = setInterval(async () => {
-              if (aborted) return;
-
-              try {
-                const k8sClient = await createUserK8sClient(jwt);
-                const response = await k8sClient.listNamespacedCustomObject(
-                  'workspace.jupyter.org', 'v1alpha1', serverConfig.namespace, 'workspaces'
-                );
-                const body = response.body as K8sListResponse<K8sWorkspace>;
-                sendWorkspaces(body.items);
-              } catch (error) {
-                log('error', 'Polling error:', error);
-              }
-            }, 5000);
-          }
-        }
-      };
-
-      startWatch();
-
-      req.signal.addEventListener('abort', () => {
-        log('info', 'SSE connection closed');
-        cleanup();
-        try { controller.close(); } catch { /* already closed */ }
-      });
-    },
-  });
-
-  return new Response(stream, {
-    headers: {
-      'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache',
-      'Connection': 'keep-alive',
-    },
-  });
-}
-
 // --- Router ---
 
 async function handleRequest(req: Request): Promise<Response> {
@@ -356,11 +219,6 @@ async function handleRequest(req: Request): Promise<Response> {
 
     if (pathname === '/api/v1/me') {
       return handleGetMe(req);
-    }
-
-    if (pathname === '/api/v1/events') {
-      if (method === 'GET') return handleSSE(req);
-      return errorResponse(405, 'Method not allowed');
     }
 
     if (pathname === '/api/v1/workspaces') {
