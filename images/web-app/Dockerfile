@@ -18,7 +18,7 @@ WORKDIR /app
 
 # Copy built application
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/server-bun ./server-bun
+COPY --from=builder /app/server ./server
 COPY --from=builder /app/package.json ./package.json
 
 # Install production dependencies only
