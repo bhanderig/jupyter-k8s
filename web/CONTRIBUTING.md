@@ -64,7 +64,7 @@ web/
 │   ├── styles/              # Global styles & CSS modules
 │   ├── types/               # TypeScript type definitions
 │   └── utils/               # Utility functions
-├── server-bun/              # Backend server
+├── server/              # Backend server
 │   ├── index.ts             # Server entry point
 │   └── k8s.ts               # Kubernetes client
 ├── public/                  # Static assets

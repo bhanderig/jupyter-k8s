@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:server": "bun --watch server-bun/index.ts",
+    "dev:server": "bun --watch server/index.ts",
     "dev:full": "concurrently \"npm run dev\" \"npm run dev:server\"",
     "build": "tsc -b && vite build",
     "build:server": "echo 'No build needed for Bun server'",
@@ -13,8 +13,8 @@
     "build:docker": "docker build -t jupyter-k8s-ui .",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "NODE_ENV=production bun run server-bun/index.ts",
-    "start:dev": "NODE_ENV=development bun run server-bun/index.ts",
+    "start": "NODE_ENV=production bun run server/index.ts",
+    "start:dev": "NODE_ENV=development bun run server/index.ts",
     "docker:build": "docker build -t jupyter-k8s-ui:latest .",
     "docker:run": "docker run -p 8090:8090 jupyter-k8s-ui:latest"
   },
