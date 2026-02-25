@@ -1,5 +1,4 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useRef } from 'react';
 import { apiClient } from './client';
 import type { CreateWorkspaceRequest, Workspace } from '../types';
 
@@ -13,97 +12,8 @@ export const templateKeys = {
   all: ['templates'] as const,
 };
 
-// SSE configuration
-const SSE_CONFIG = {
-  maxRetries: 5,
-  baseDelay: 1000,
-  maxDelay: 30000,
-} as const;
-
-/**
- * SSE hook for real-time workspace updates with exponential backoff
- */
-export function useWorkspaceSSE() {
-  const queryClient = useQueryClient();
-  const retryCountRef = useRef(0);
-  const eventSourceRef = useRef<EventSource | null>(null);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const connect = () => {
-      if (!isMounted) return;
-
-      // Clean up existing connection
-      if (eventSourceRef.current) {
-        eventSourceRef.current.close();
-      }
-
-      const eventSource = new EventSource('/api/v1/events');
-      eventSourceRef.current = eventSource;
-
-      eventSource.onopen = () => {
-        retryCountRef.current = 0; // Reset retry count on successful connection
-        console.log('SSE connection established');
-      };
-
-      eventSource.onmessage = (event) => {
-        try {
-          const { type, data } = JSON.parse(event.data);
-          if (type === 'workspaces') {
-            // Update the workspaces list cache
-            queryClient.setQueryData(workspaceKeys.all, data as Workspace[]);
-            
-            // Also update individual workspace detail caches
-            (data as Workspace[]).forEach((workspace) => {
-              queryClient.setQueryData(
-                workspaceKeys.detail(workspace.metadata.name),
-                workspace
-              );
-            });
-            
-            console.log(`SSE: Updated ${(data as Workspace[]).length} workspaces`);
-          }
-        } catch (err) {
-          console.error('Failed to parse SSE event:', err);
-        }
-      };
-
-      eventSource.onerror = () => {
-        eventSource.close();
-        eventSourceRef.current = null;
-
-        if (!isMounted) return;
-
-        // Exponential backoff with max retries
-        if (retryCountRef.current < SSE_CONFIG.maxRetries) {
-          const delay = Math.min(
-            SSE_CONFIG.baseDelay * Math.pow(2, retryCountRef.current),
-            SSE_CONFIG.maxDelay
-          );
-          retryCountRef.current++;
-          console.warn(`SSE connection error, retrying in ${delay}ms (attempt ${retryCountRef.current}/${SSE_CONFIG.maxRetries})`);
-          timeoutRef.current = setTimeout(connect, delay);
-        } else {
-          console.error('SSE max retries reached, falling back to polling');
-        }
-      };
-    };
-
-    connect();
-
-    return () => {
-      isMounted = false;
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-      if (eventSourceRef.current) {
-        eventSourceRef.current.close();
-      }
-    };
-  }, [queryClient]);
-}
+// Polling configuration
+const POLL_INTERVAL_MS = 3000; // 3 seconds
 
 export function useTemplates() {
   return useQuery({
@@ -115,26 +25,42 @@ export function useTemplates() {
 }
 
 export function useWorkspaces() {
-  useWorkspaceSSE();
-
   return useQuery({
     queryKey: workspaceKeys.all,
     queryFn: () => apiClient.listWorkspaces(),
-    staleTime: Infinity, // SSE keeps data fresh
-    refetchOnWindowFocus: false, // SSE handles updates
+    refetchInterval: POLL_INTERVAL_MS,
+    refetchIntervalInBackground: false,
   });
 }
 
-export function useWorkspace(name: string) {
-  useWorkspaceSSE(); // Connect to SSE for real-time updates
+/**
+ * A workspace is "settled" when it's in a terminal state and doesn't need polling.
+ * Terminal states: Available=True (running & ready), or Stopped with no Progressing.
+ */
+function isWorkspaceSettled(workspace: Workspace | undefined): boolean {
+  if (!workspace) return false;
 
-  return useQuery({
+  const conditions = workspace.status?.conditions ?? [];
+  const isAvailable = conditions.some((c) => c.type === 'Available' && c.status === 'True');
+  const isProgressing = conditions.some((c) => c.type === 'Progressing' && c.status === 'True');
+
+  if (isAvailable && !isProgressing) return true;
+  if (workspace.spec.desiredStatus === 'Stopped' && !isProgressing) return true;
+
+  return false;
+}
+
+export function useWorkspace(name: string) {
+  const result = useQuery({
     queryKey: workspaceKeys.detail(name),
     queryFn: () => apiClient.getWorkspace(name),
     enabled: Boolean(name),
-    staleTime: Infinity, // SSE keeps data fresh
-    refetchOnWindowFocus: false, // SSE handles updates
+    refetchInterval: (query) =>
+      isWorkspaceSettled(query.state.data) ? false : POLL_INTERVAL_MS,
+    refetchIntervalInBackground: false,
   });
+
+  return result;
 }
 
 export function useCreateWorkspace() {
@@ -181,7 +107,7 @@ export function useStartWorkspace() {
 
   return useMutation({
     mutationFn: (name: string) => apiClient.startWorkspace(name),
-    // Optimistic update - SSE will provide the real update
+    // Optimistic update — polling will reconcile with real state
     onMutate: async (name) => {
       await queryClient.cancelQueries({ queryKey: workspaceKeys.all });
       const previousWorkspaces = queryClient.getQueryData<Workspace[]>(workspaceKeys.all);
@@ -194,14 +120,17 @@ export function useStartWorkspace() {
         ) ?? []
       );
       
-      return { previousWorkspaces };
+      return { previousWorkspaces, name };
     },
     onError: (_err, _name, context) => {
       if (context?.previousWorkspaces) {
         queryClient.setQueryData(workspaceKeys.all, context.previousWorkspaces);
       }
     },
-    // Don't invalidate - let SSE handle the real update
+    onSettled: (_data, _err, name) => {
+      queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
+      queryClient.invalidateQueries({ queryKey: workspaceKeys.detail(name) });
+    },
   });
 }
 
@@ -210,7 +139,7 @@ export function useStopWorkspace() {
 
   return useMutation({
     mutationFn: (name: string) => apiClient.stopWorkspace(name),
-    // Optimistic update - SSE will provide the real update
+    // Optimistic update — polling will reconcile with real state
     onMutate: async (name) => {
       await queryClient.cancelQueries({ queryKey: workspaceKeys.all });
       const previousWorkspaces = queryClient.getQueryData<Workspace[]>(workspaceKeys.all);
@@ -223,13 +152,16 @@ export function useStopWorkspace() {
         ) ?? []
       );
       
-      return { previousWorkspaces };
+      return { previousWorkspaces, name };
     },
     onError: (_err, _name, context) => {
       if (context?.previousWorkspaces) {
         queryClient.setQueryData(workspaceKeys.all, context.previousWorkspaces);
       }
     },
-    // Don't invalidate - let SSE handle the real update
+    onSettled: (_data, _err, name) => {
+      queryClient.invalidateQueries({ queryKey: workspaceKeys.all });
+      queryClient.invalidateQueries({ queryKey: workspaceKeys.detail(name) });
+    },
   });
 }
