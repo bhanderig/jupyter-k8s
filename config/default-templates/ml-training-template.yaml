@@ -1,0 +1,68 @@
+# ML Training Template - High-resource workspace for model training
+apiVersion: workspace.jupyter.org/v1alpha1
+kind: WorkspaceTemplate
+metadata:
+  name: ml-training
+  namespace: default
+  labels:
+    app.kubernetes.io/name: jupyter-k8s
+    app.kubernetes.io/component: template
+spec:
+  displayName: "ML Training"
+  description: "High-resource workspace for machine learning model training"
+  defaultImage: "uv"
+  allowedImages:
+    - "uv"
+    - "public.ecr.aws/sagemaker/sagemaker-distribution:3.2.0-cpu"
+  allowCustomImages: true
+  defaultResources:
+    requests:
+      cpu: "2"
+      memory: "8Gi"
+    limits:
+      cpu: "4"
+      memory: "16Gi"
+  resourceBounds:
+    resources:
+      cpu:
+        min: "1"
+        max: "8"
+      memory:
+        min: "4Gi"
+        max: "32Gi"
+      nvidia.com/gpu:
+        min: "0"
+        max: "1"
+  primaryStorage:
+    defaultSize: "50Gi"
+    minSize: "20Gi"
+    maxSize: "200Gi"
+    defaultMountPath: "/home/jovyan"
+    defaultStorageClassName: "ebs-sc"
+  allowSecondaryStorages: true
+  defaultNodeSelector:
+    workload-type: "ml-training"
+  defaultTolerations:
+    - key: "nvidia.com/gpu"
+      operator: "Exists"
+      effect: "NoSchedule"
+  defaultLifecycle:
+    postStart:
+      exec:
+        command: ["/bin/sh", "-c", "echo 'ML workspace started' >> /tmp/workspace.log"]
+  defaultIdleShutdown:
+    enabled: false
+    idleTimeoutInMinutes: 120
+    detection:
+      httpGet:
+        path: "/api/idle"
+        port: 8888
+  idleShutdownOverrides:
+    allow: true
+    minIdleTimeoutInMinutes: 60
+    maxIdleTimeoutInMinutes: 720
+  defaultOwnershipType: "OwnerOnly"
+  defaultAccessType: "OwnerOnly"
+  appType: "jupyter"
+  defaultPodSecurityContext:
+    fsGroup: 1000

@@ -1,0 +1,59 @@
+# Code Editor Template - VS Code-like environment for development
+apiVersion: workspace.jupyter.org/v1alpha1
+kind: WorkspaceTemplate
+metadata:
+  name: code-editor
+  namespace: default
+  labels:
+    app.kubernetes.io/name: jupyter-k8s
+    app.kubernetes.io/component: template
+spec:
+  displayName: "Code Editor"
+  description: "VS Code-like environment for software development"
+  defaultImage: "uv"
+  allowedImages:
+    - "uv"
+    - "public.ecr.aws/sagemaker/sagemaker-distribution:3.2.0-cpu"
+  allowCustomImages: true
+  defaultResources:
+    requests:
+      cpu: "1"
+      memory: "2Gi"
+    limits:
+      cpu: "2"
+      memory: "4Gi"
+  resourceBounds:
+    resources:
+      cpu:
+        min: "500m"
+        max: "4"
+      memory:
+        min: "1Gi"
+        max: "8Gi"
+  primaryStorage:
+    defaultSize: "20Gi"
+    minSize: "10Gi"
+    maxSize: "50Gi"
+    defaultMountPath: "/home/jovyan"
+    defaultStorageClassName: "ebs-sc"
+  allowSecondaryStorages: true
+  defaultLifecycle:
+    postStart:
+      exec:
+        command: ["/bin/sh", "-c", "echo 'Code editor started' >> /tmp/workspace.log"]
+  defaultIdleShutdown:
+    enabled: true
+    idleTimeoutInMinutes: 60
+    detection:
+      httpGet:
+        path: "/api/idle"
+        port: 8888
+  idleShutdownOverrides:
+    allow: true
+    minIdleTimeoutInMinutes: 30
+    maxIdleTimeoutInMinutes: 480
+  defaultOwnershipType: "OwnerOnly"
+  defaultAccessType: "OwnerOnly"
+  appType: "code-editor"
+  defaultPodSecurityContext:
+    fsGroup: 1000
