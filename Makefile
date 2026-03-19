@@ -613,7 +613,9 @@ deploy-aws-traefik-dex-internal:
 			--set authmiddleware.imageName=$(ECR_REPOSITORY_AUTH) \
 			--set authmiddleware.enableBearerAuth=true \
 			--set rotator.repository=$(ECR_REGISTRY) \
-			--set rotator.imageName=$(ECR_REPOSITORY_ROTATOR)"; \
+			--set rotator.imageName=$(ECR_REPOSITORY_ROTATOR) \
+			--set webApp.image.repository=$(ECR_REGISTRY)/jk8s-application-web-app \
+			--set webApp.image.pullPolicy=Always"; \
 		if [ ! -z "$$DEX_OAUTH2_SECRET" ]; then \
 			HELM_ARGS="$$HELM_ARGS --set dex.oauth2ProxyClientSecret=$$DEX_OAUTH2_SECRET"; \
 		fi; \

@@ -13,7 +13,8 @@ export const templateKeys = {
 };
 
 // Polling configuration
-const POLL_INTERVAL_MS = 3000; // 3 seconds
+const LIST_POLL_INTERVAL_MS = 60_000; // 60 seconds
+const DETAIL_POLL_INTERVAL_MS = 3_000; // 3 seconds (only while workspace is transitioning)
 
 export function useTemplates() {
   return useQuery({
@@ -28,7 +29,7 @@ export function useWorkspaces() {
   return useQuery({
     queryKey: workspaceKeys.all,
     queryFn: () => apiClient.listWorkspaces(),
-    refetchInterval: POLL_INTERVAL_MS,
+    refetchInterval: LIST_POLL_INTERVAL_MS,
     refetchIntervalInBackground: false,
   });
 }
@@ -56,7 +57,7 @@ export function useWorkspace(name: string) {
     queryFn: () => apiClient.getWorkspace(name),
     enabled: Boolean(name),
     refetchInterval: (query) =>
-      isWorkspaceSettled(query.state.data) ? false : POLL_INTERVAL_MS,
+      isWorkspaceSettled(query.state.data) ? false : DETAIL_POLL_INTERVAL_MS,
     refetchIntervalInBackground: false,
   });
 

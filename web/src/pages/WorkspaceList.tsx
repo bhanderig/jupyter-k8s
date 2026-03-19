@@ -4,7 +4,7 @@ import {
   Box, Typography, Button, Grid, CircularProgress, ToggleButtonGroup,
   ToggleButton, InputBase, Stack, Paper,
 } from '@mui/material';
-import { Add, Search } from '@mui/icons-material';
+import { Add, Search, Refresh } from '@mui/icons-material';
 import { useWorkspaces } from '../api';
 import { useAuth } from '../context';
 import { WorkspaceCard } from '../components';
@@ -14,7 +14,7 @@ import styles from './WorkspaceList.module.css';
 export function WorkspaceList() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { data: workspaces, isLoading } = useWorkspaces();
+  const { data: workspaces, isLoading, refetch, isFetching } = useWorkspaces();
   const [filter, setFilter] = useState<'all' | 'mine'>('mine');
   const [search, setSearch] = useState('');
 
@@ -102,9 +102,19 @@ export function WorkspaceList() {
           </ToggleButtonGroup>
         </Stack>
 
-        <Button variant="contained" startIcon={<Add />} onClick={handleCreateClick} className={styles.gradientButton}>
-          {strings.workspace.newWorkspace}
-        </Button>
+        <Stack direction="row" gap={1}>
+          <Button
+            variant="outlined"
+            startIcon={isFetching ? <CircularProgress size={16} /> : <Refresh />}
+            onClick={() => refetch()}
+            disabled={isFetching}
+          >
+            {strings.workspace.refresh}
+          </Button>
+          <Button variant="contained" startIcon={<Add />} onClick={handleCreateClick} className={styles.gradientButton}>
+            {strings.workspace.newWorkspace}
+          </Button>
+        </Stack>
       </Stack>
 
       {isEmpty ? (
