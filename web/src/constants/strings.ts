@@ -28,6 +28,7 @@ export const strings = {
     filterAll: 'All',
     filterMine: 'My Workspaces',
     newWorkspace: 'New Workspace',
+    refresh: 'Refresh',
     createWorkspace: 'Create Workspace',
     noWorkspacesYet: 'No workspaces yet',
     noWorkspacesFound: 'No workspaces found',
