@@ -4,6 +4,7 @@
 CONTAINER_TOOL ?= finch
 BUILD_OPTS :=
 CLOUD_PROVIDER :=
+PLATFORM ?= linux/amd64
 
 # Registry configuration
 # For local development with Kind, we use direct image references with no registry prefix
@@ -34,7 +35,7 @@ TAG ?= latest
 
 # List of all images
 APPLICATION_IMAGE_PREFIX := jk8s-application
-IMAGES := jupyter-uv
+IMAGES := jupyter-uv web-app
 
 
 
@@ -46,8 +47,16 @@ build-all: $(IMAGES)
 jupyter-uv:
 	@echo "Building jupyter-uv image..."
 	$(CONTAINER_TOOL) build $(BUILD_OPTS) \
+		--platform=$(PLATFORM) \
 		-t $(APPLICATION_IMAGE_PREFIX)-jupyter-uv:$(TAG) \
 		-f jupyter-uv/Dockerfile jupyter-uv
+
+web-app:
+	@echo "Building web-app image..."
+	$(CONTAINER_TOOL) build $(BUILD_OPTS) \
+		--platform=$(PLATFORM) \
+		-t $(APPLICATION_IMAGE_PREFIX)-web-app:$(TAG) \
+		-f web-app/Dockerfile ..
 
 
 # Push all images to registry (when REGISTRY is set)

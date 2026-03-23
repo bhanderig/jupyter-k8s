@@ -1,0 +1,10 @@
+# Default WorkspaceTemplates for all users
+# Apply with: kubectl apply -k config/default-templates/
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - starter-template.yaml
+  - data-science-template.yaml
+  - ml-training-template.yaml
+  - code-editor-template.yaml
