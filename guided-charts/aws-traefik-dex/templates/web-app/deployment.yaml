@@ -35,6 +35,30 @@ spec:
           value: {{ .Values.webApp.namespace | quote }}
         - name: STATIC_DIR
           value: "./dist"
+        {{- if and .Values.webApp.session .Values.webApp.session.enabled }}
+        - name: SESSION_ENABLED
+          value: "true"
+        - name: SESSION_COOKIE_NAME
+          value: {{ .Values.webApp.session.cookieName | quote }}
+        - name: SESSION_COOKIE_PATH
+          value: {{ .Values.webApp.session.cookiePath | quote }}
+        - name: SESSION_COOKIE_MAX_AGE_SECS
+          value: {{ .Values.webApp.session.cookieMaxAgeSecs | quote }}
+        - name: SESSION_MAX_LIFETIME_SECS
+          value: {{ .Values.webApp.session.maxSessionLifetimeSecs | quote }}
+        - name: SESSION_NEAR_EXPIRY_THRESHOLD_SECS
+          value: {{ .Values.webApp.session.nearExpiryThresholdSecs | quote }}
+        - name: SESSION_SECRET_NAME
+          value: {{ .Values.webApp.session.secretName | quote }}
+        - name: SESSION_SECRET_NAMESPACE
+          value: {{ .Values.namespace | quote }}
+        - name: SESSION_KEY_PREFIX
+          value: {{ .Values.webApp.session.keyPrefix | quote }}
+        - name: SESSION_NEW_KEY_USE_DELAY_SECS
+          value: {{ .Values.webApp.session.newKeyUseDelaySecs | quote }}
+        - name: SESSION_EXPECTED_DOMAIN
+          value: {{ .Values.domain | quote }}
+        {{- end }}
         resources:
           {{- toYaml .Values.webApp.resources | nindent 10 }}
         livenessProbe:

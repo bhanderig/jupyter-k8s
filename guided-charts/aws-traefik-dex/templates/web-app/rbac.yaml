@@ -1,6 +1,5 @@
 {{- if .Values.webApp.enabled }}
 # ServiceAccount for the web-app pod
-# Note: This service account has NO permissions - all operations use the user's OAuth token
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -9,4 +8,38 @@ metadata:
   labels:
     app: web-app
     component: web-app
+{{- if .Values.webApp.session.enabled }}
+---
+# Role for reading session signing keys (secret watch for key rotation)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: web-app-session-reader
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: web-app
+    component: security
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    resourceNames: ["{{ .Values.webApp.session.secretName }}"]
+    verbs: ["get", "watch", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: web-app-session-reader
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: web-app
+    component: security
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: web-app-session-reader
+subjects:
+  - kind: ServiceAccount
+    name: web-app
+    namespace: {{ .Values.namespace }}
+{{- end }}
 {{- end }}

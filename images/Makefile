@@ -35,7 +35,7 @@ TAG ?= latest
 
 # List of all images
 APPLICATION_IMAGE_PREFIX := jk8s-application
-IMAGES := jupyter-uv web-app
+IMAGES := jupyter-uv
 
 
 

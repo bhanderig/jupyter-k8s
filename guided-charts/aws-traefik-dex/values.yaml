@@ -172,6 +172,21 @@ webApp:
     requests:
       cpu: 100m
       memory: 128Mi
+  # Session cookie configuration for auth fast path
+  # When enabled, the web-app emits its own encrypted session cookie,
+  # allowing subsequent requests to bypass OAuth2 Proxy
+  session:
+    enabled: true
+    cookieName: "workspace_console_session"
+    cookiePath: "/api/"
+    cookieMaxAgeSecs: 2700          # 45 minutes, must be < Dex token lifetime
+    maxSessionLifetimeSecs: 3600    # Max total session duration from original auth
+    nearExpiryThresholdSecs: 600    # Stop refreshing cookie when token within 10min of expiry
+    secretName: "web-app-session-secret"
+    keyPrefix: "session-key-"
+    keySizeBytes: 32
+    numberOfKeys: 3
+    newKeyUseDelaySecs: 60          # Cooloff before using a newly rotated key
 
 # Authmiddleware configuration
 authmiddleware:
