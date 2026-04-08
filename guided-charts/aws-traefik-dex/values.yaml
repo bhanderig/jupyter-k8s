@@ -74,8 +74,9 @@ dex:
   # Prefix for the k8s groups authenticated through Dex
   oidcGroupPrefix: "github:"
 
-  # Client ID for oauth2-proxy to authenticate with Dex (auto-generated if empty)
-  oauth2ProxyClientId: "oauth2-proxy"
+  # Client ID for oauth2-proxy to authenticate with Dex
+  # Must match the Kubernetes OIDC client ID for tokens to work with K8s API
+  oauth2ProxyClientId: "kubectl-oidc"
   # Client secret for oauth2-proxy to authenticate with Dex (auto-generated if empty)
   # Generate with 'openssl rand -hex 16'
   oauth2ProxyClientSecret: ""
@@ -134,6 +135,44 @@ oauth2Proxy:
   # Skip authentication for certain paths (useful for WebSockets)
   skipAuthRegex: []
 
+# ============================================================================
+# Web App (Self-Service UI) - OPTIONAL
+# ============================================================================
+# Enable this to provide a web-based UI for users to manage their workspaces
+# through a browser instead of using kubectl commands.
+#
+# When enabled:
+#   - Users can access the UI at https://<domain>/
+#   - Create, view, update, and delete workspaces through the web interface
+#   - View workspace templates and their configurations
+#   - Authenticated via GitHub OAuth through Dex
+#
+# When disabled:
+#   - Users must use kubectl to manage workspaces
+#   - All workspace management is done via Kubernetes API
+#   - No web interface is available
+#
+# Set 'enabled: false' if you only want kubectl-based workspace management
+# ============================================================================
+webApp:
+  # Enable or disable the web UI (default: true)
+  enabled: true
+  replicas: 1
+  image:
+    repository: jk8s-application-web-app
+    tag: latest
+    pullPolicy: IfNotPresent
+  # Kubernetes namespace where workspaces are created and managed
+  # This should match the namespace where your WorkspaceTemplates are deployed
+  namespace: default
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
 # Authmiddleware configuration
 authmiddleware:
   # Whether to deploy the authmiddleware component
@@ -154,15 +193,14 @@ authmiddleware:
       cpu: 100m
       memory: 64Mi
   # JWT configuration
+  # Required: must be provided as base64 encoded string (generate with: openssl rand -base64 32)
+  jwtSigningKey: ""
   jwtIssuer: "jupyter-k8s-auth"
   jwtAudience: "workspace-users"
   jwtExpiration: "1h"
   jwtRefreshEnable: "true"
   jwtRefreshWindow: "15m"
   jwtRefreshHorizon: "12h"
-  jwtNewKeyUseDelay: "5s"
-  # Secret configuration for multi-key JWT signing
-  secretName: "authmiddleware-secrets"
   # Cookie configuration
   cookieName: "workspace_auth"
   cookieSecure: "true"
@@ -183,28 +221,17 @@ authmiddleware:
   enableBearerAuth: false
   # Timeout in seconds for OIDC provider initialization
   oidcInitTimeoutSecs: 30
+  # Secret name for JWT signing key
+  secretName: "jwt-signing-secret"
 
-# JWT Secret Rotator configuration
+# Rotator configuration for JWT key rotation
 rotator:
-  # Whether to enable automatic JWT secret rotation
-  enabled: true
-  # Rotator image settings
+  # Whether to deploy the rotator component
+  enabled: false
+  # Schedule for key rotation (cron format)
+  schedule: "0 0 * * 0"  # Weekly on Sunday at midnight
+  # Image settings
   imagePullPolicy: Always
   repository: docker.io
   imageName: jupyter-k8s-rotator
   imageTag: latest
-  # Rotation interval (how often to rotate keys)
-  # Must be parseable as a duration (e.g., "15m", "1h")
-  rotationInterval: "15m"
-  # Number of keys to keep (older keys are pruned after rotation)
-  # Must satisfy: numberOfKeys * rotationInterval >= jwtExpiration + buffer
-  # Recommended: 6 keys for 15m rotation with 1h expiration (90min retention)
-  numberOfKeys: 6
-  # Resource limits for the CronJob
-  resources:
-    limits:
-      cpu: 100m
-      memory: 64Mi
-    requests:
-      cpu: 50m
-      memory: 32Mi
