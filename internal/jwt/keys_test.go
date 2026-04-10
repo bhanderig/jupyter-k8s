@@ -14,12 +14,22 @@ import (
 
 func TestBuildKeyName(t *testing.T) {
 	timestamp := int64(1609459200) // 2021-01-01 00:00:00 UTC
-	expected := "jwt-signing-key-1609459200"
-	result := BuildKeyName(timestamp)
 
-	if result != expected {
-		t.Errorf("Expected %s, got %s", expected, result)
-	}
+	t.Run("default prefix", func(t *testing.T) {
+		result := BuildKeyName(timestamp)
+		expected := "jwt-signing-key-1609459200"
+		if result != expected {
+			t.Errorf("Expected %s, got %s", expected, result)
+		}
+	})
+
+	t.Run("custom prefix", func(t *testing.T) {
+		result := BuildKeyName(timestamp, "session-key-")
+		expected := "session-key-1609459200"
+		if result != expected {
+			t.Errorf("Expected %s, got %s", expected, result)
+		}
+	})
 }
 
 func TestParseKeyTimestamp(t *testing.T) {
@@ -66,6 +76,59 @@ func TestParseKeyTimestamp(t *testing.T) {
 				}
 				if tt.errorContains != "" && !contains(err.Error(), tt.errorContains) {
 					t.Errorf("Expected error containing '%s', got '%s'", tt.errorContains, err.Error())
+				}
+			} else {
+				if err != nil {
+					t.Fatalf("Unexpected error: %v", err)
+				}
+				if result != tt.expected {
+					t.Errorf("Expected %d, got %d", tt.expected, result)
+				}
+			}
+		})
+	}
+}
+
+func TestParseKeyTimestampWithPrefix(t *testing.T) {
+	tests := []struct {
+		name        string
+		keyName     string
+		prefix      string
+		expected    int64
+		expectError bool
+	}{
+		{
+			name:     "session key prefix",
+			keyName:  "session-key-1775604478",
+			prefix:   "session-key-",
+			expected: 1775604478,
+		},
+		{
+			name:     "custom prefix",
+			keyName:  "my-prefix-9999999999",
+			prefix:   "my-prefix-",
+			expected: 9999999999,
+		},
+		{
+			name:        "wrong prefix",
+			keyName:     "session-key-1234",
+			prefix:      "jwt-signing-key-",
+			expectError: true,
+		},
+		{
+			name:        "invalid timestamp",
+			keyName:     "session-key-abc",
+			prefix:      "session-key-",
+			expectError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result, err := ParseKeyTimestampWithPrefix(tt.keyName, tt.prefix)
+			if tt.expectError {
+				if err == nil {
+					t.Error("Expected error but got none")
 				}
 			} else {
 				if err != nil {

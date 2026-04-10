@@ -22,18 +22,28 @@ const (
 	KeySizeBytes = 48
 )
 
-// BuildKeyName creates a key name with the given timestamp
-func BuildKeyName(timestamp int64) string {
-	return fmt.Sprintf("%s%d", KeyPrefix, timestamp)
+// BuildKeyName creates a key name with the given timestamp.
+// An optional prefix can be provided; defaults to KeyPrefix.
+func BuildKeyName(timestamp int64, prefix ...string) string {
+	p := KeyPrefix
+	if len(prefix) > 0 {
+		p = prefix[0]
+	}
+	return fmt.Sprintf("%s%d", p, timestamp)
 }
 
-// ParseKeyTimestamp extracts the timestamp from a key name
+// ParseKeyTimestamp extracts the timestamp from a key name using the default KeyPrefix.
 func ParseKeyTimestamp(keyName string) (int64, error) {
-	if !strings.HasPrefix(keyName, KeyPrefix) {
-		return 0, fmt.Errorf("key name %s does not have prefix %s", keyName, KeyPrefix)
+	return ParseKeyTimestampWithPrefix(keyName, KeyPrefix)
+}
+
+// ParseKeyTimestampWithPrefix extracts the timestamp from a key name with a given prefix.
+func ParseKeyTimestampWithPrefix(keyName string, prefix string) (int64, error) {
+	if !strings.HasPrefix(keyName, prefix) {
+		return 0, fmt.Errorf("key name %s does not have prefix %s", keyName, prefix)
 	}
 
-	timestampStr := strings.TrimPrefix(keyName, KeyPrefix)
+	timestampStr := strings.TrimPrefix(keyName, prefix)
 	timestamp, err := strconv.ParseInt(timestampStr, 10, 64)
 	if err != nil {
 		return 0, fmt.Errorf("failed to parse timestamp from %s: %w", keyName, err)
